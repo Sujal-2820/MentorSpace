@@ -27,7 +27,7 @@ export default function SignUp() {
             />
             <h2 className="text-3xl font-bold text-black mb-4">Join Our Mentorship Community</h2>
             <p className="text-primary text-center">
-              Connect with mentors, grow your skills, and achieve your goals.
+              <span className='text-blue-600'>Connect</span> with mentors, <span className='text-blue-600'>grow</span> your skills, and <span className='text-blue-600'>achieve</span> your goals.
             </p>
           </div>
         </div>
@@ -84,7 +84,7 @@ export default function SignUp() {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                  className="w-full flex justify-center py-2 px-4 border rounded-md shadow-sm text-md font-medium text-white bg-foreground border-gray-400 hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                 >
                   Sign Up
                 </button>

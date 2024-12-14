@@ -11,17 +11,20 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-primary">MentorMatch</span>
+              <span className="text-2xl font-bold text-primary">Mentor<span className='text-blue-600'>Match</span></span>
             </Link>
           </div>
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-              <Link href="/dashboard" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">Dashboard</Link>
-              <Link href="/about" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">About</Link>
-              <Link href="/features" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">Features</Link>
-              <Link href="/login" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">Login</Link>
-              <Link href="/signup" className="bg-primary text-primary hover:bg-opacity-90 px-3 py-2 rounded-md text-sm font-medium">Sign Up</Link>
-            </div>
+          {/* Centered Links Section */}
+          <div className="hidden md:flex flex-grow justify-center space-x-4">
+            <Link href="/dashboard" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">Dashboard</Link>
+            <Link href="/about" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">About</Link>
+            <Link href="/features" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">Features</Link>
+          </div>
+
+          {/* Right Side: Login and Sign Up */}
+          <div className="hidden md:flex items-center space-x-4">
+            <Link href="/login" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">Login</Link>
+            <Link href="/signup" className="bg-foreground text-white hover:bg-opacity-90 px-6 py-2 rounded-full text-md font-medium">Sign Up</Link>
           </div>
           <div className="md:hidden flex items-center">
             <button
@@ -60,7 +63,7 @@ export default function Navbar() {
           <Link href="/about" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">About</Link>
           <Link href="/features" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Features</Link>
           <Link href="/login" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Login</Link>
-          <Link href="/signup" className="bg-primary text-white hover:bg-opacity-90 block px-3 py-2 rounded-md text-base font-medium">Sign Up</Link>
+          <Link href="/signup" className="bg-foreground text-white hover:bg-opacity-90 block px-3 py-2 rounded-md text-base font-medium">Sign Up</Link>
         </div>
       </div>
     </nav>
