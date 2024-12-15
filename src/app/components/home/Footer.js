@@ -10,7 +10,6 @@ export default function Footer() {
             <ul className="mt-4 space-y-4">
               <li><Link href="/about" className="text-base text-foreground hover:text-primary">Our Story</Link></li>
               <li><Link href="/team" className="text-base text-foreground hover:text-primary">Team</Link></li>
-              <li><Link href="/careers" className="text-base text-foreground hover:text-primary">Careers</Link></li>
             </ul>
           </div>
           <div>
@@ -38,7 +37,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-gray-200 pt-8">
-          <p className="text-base text-foreground">&copy; 2024 MentorMatch. All rights reserved.</p>
+          <p className="text-base text-foreground">&copy; 2024 MentorSpace. All rights reserved.</p>
         </div>
       </div>
     </footer>
