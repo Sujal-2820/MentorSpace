@@ -9,7 +9,7 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false)
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
-
+  
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -61,7 +61,7 @@ export default function SignUp() {
                     type={showPassword ? "text" : "password"}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-background text-foreground"
-                    placeholder="••••••••"
+                    placeholder="•••••••••"
                   />
                   <button
                     type="button"
