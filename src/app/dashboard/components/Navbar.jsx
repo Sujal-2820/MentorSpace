@@ -2,13 +2,13 @@
 
 import { Bell, LogOut, Menu } from 'lucide-react'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../components/ui/button'
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '../../components/ui/dropdown-menu'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -19,7 +19,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+} from '../../components/ui/alert-dialog'
 
 export default function Navbar({ toggleSidebar }) {
 const [notifications, setNotifications] = useState([

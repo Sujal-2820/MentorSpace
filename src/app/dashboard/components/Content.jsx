@@ -1,4 +1,4 @@
-import { SidebarInset } from '@/components/ui/sidebar'
+import { SidebarInset } from '../../components/ui/sidebar'
 import { AnimatePresence, motion } from 'framer-motion'
 import ProfileScreen from '../screens/Profile/page'
 import RequestsScreen from '../screens/Requests/page'
