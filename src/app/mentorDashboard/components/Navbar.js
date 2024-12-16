@@ -14,7 +14,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex justify-between items-center h-16 px-4 bg-white shadow-md">
+    <nav className="flex justify-between items-center h-16 px-4 py-4 bg-white shadow-md sticky top-0">
       {/* Brand */}
       <div className="flex items-center space-x-2">
         <div className="font-bold text-xl text-primary">MentorSpace</div>
