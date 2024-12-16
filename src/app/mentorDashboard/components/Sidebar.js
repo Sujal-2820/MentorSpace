@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';  // Import Next.js Link component
 import { FiMenu, FiHome, FiUser, FiCalendar, FiFileText, FiBarChart2 } from 'react-icons/fi';
 
 const Sidebar = () => {
@@ -10,11 +11,11 @@ const Sidebar = () => {
 
   // Navigation items
   const navItems = [
-    { id: 1, label: 'Home', icon: <FiHome />, link: '/dashboard' },
-    { id: 2, label: 'Profile', icon: <FiUser />, link: '/dashboard/profile' },
-    { id: 3, label: 'Sessions', icon: <FiCalendar />, link: '/dashboard/sessions' },
-    { id: 4, label: 'Resources', icon: <FiFileText />, link: '/dashboard/resources' },
-    { id: 5, label: 'Analytics', icon: <FiBarChart2 />, link: '/dashboard/analytics' },
+    { id: 1, label: 'Home', icon: <FiHome />, link: '/mentorDashboard' },
+    { id: 2, label: 'Profile', icon: <FiUser />, link: '/mentorDashboard/screens/Profile' },
+    { id: 3, label: 'Sessions', icon: <FiCalendar />, link: '/mentorDashboard/screens/Sessions' },
+    { id: 4, label: 'Resources', icon: <FiFileText />, link: '/mentorDashboard/screens/Resources' },
+    { id: 5, label: 'Analytics', icon: <FiBarChart2 />, link: '/mentorDashboard/screens/Analytics' },
   ];
 
   return (
@@ -39,14 +40,17 @@ const Sidebar = () => {
               key={item.id}
               className="flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer group w-full justify-center"
             >
-              <span className="text-xl">{item.icon}</span>
-              <span
-                className={`ml-4 text-sm ${
-                  isCollapsed ? 'hidden' : 'inline-block'
-                } group-hover:text-primary`}
-              >
-                {item.label}
-              </span>
+              {/* Removed <a> tag, directly using Link for navigation */}
+              <Link href={item.link} className="flex items-center w-full">
+                <span className="text-xl">{item.icon}</span>
+                <span
+                  className={`ml-4 text-sm ${
+                    isCollapsed ? 'hidden' : 'inline-block'
+                  } group-hover:text-primary`}
+                >
+                  {item.label}
+                </span>
+              </Link>
             </li>
           ))}
         </ul>
