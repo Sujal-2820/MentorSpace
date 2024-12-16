@@ -1,8 +1,30 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva } from "class-variance-authority"
+import { createContext, useContext, useState } from "react"
+
 
 import { cn } from "@/lib/utils"
+
+const SidebarContext = React.createContext({ collapsed: false, setCollapsed: () => {} })
+
+const SidebarProvider = ({ children, defaultCollapsed = false }) => {
+  const [collapsed, setCollapsed] = React.useState(defaultCollapsed)
+
+  return (
+    <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
+      {children}
+    </SidebarContext.Provider>
+  )
+}
+
+const useSidebar = () => {
+  const context = React.useContext(SidebarContext)
+  if (context === undefined) {
+    throw new Error("useSidebar must be used within a SidebarProvider")
+  }
+  return context
+}
 
 const Sidebar = React.forwardRef(({ className, ...props }, ref) => (
   <aside
@@ -101,16 +123,14 @@ const SidebarTrigger = React.forwardRef(({ className, ...props }, ref) => (
 ))
 SidebarTrigger.displayName = "SidebarTrigger"
 
-
 const SidebarInset = React.forwardRef(({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("flex-1 overflow-auto", className)}
-      {...props}
-    />
+  <div
+    ref={ref}
+    className={cn("flex-1 overflow-auto", className)}
+    {...props}
+  />
 ))
 SidebarInset.displayName = "SidebarInset"
-  
 
 export {
   Sidebar,
@@ -124,5 +144,6 @@ export {
   SidebarRail,
   SidebarTrigger,
   SidebarInset,
+  SidebarProvider,
+  useSidebar,
 }
-
