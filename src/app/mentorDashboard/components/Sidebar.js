@@ -24,7 +24,7 @@ const Sidebar = () => {
     <aside
       className={`${
         isCollapsed ? 'w-16' : 'w-64'
-      } bg-gray-800 text-white h-full transition-all duration-300 fixed top-16`}
+      } bg-gray-800 text-white h-full transition-all duration-300 fixed top-16 z-10`}
     >
       {/* Toggle Button */}
       <div

@@ -38,7 +38,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 py-8">
+    <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 py-6">
       <h1 className="text-2xl font-semibold">Profile</h1>
       <form className="mt-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

@@ -3,35 +3,50 @@
 import React, { useState } from 'react';
 import { FiBell } from 'react-icons/fi';
 import { HiOutlineLogout } from 'react-icons/hi';
+import { useRouter } from 'next/navigation';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 const Navbar = () => {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const router = useRouter();
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const handleLogout = () => {
-    // Add logout logic here
     console.log('User logged out');
     setShowLogoutDialog(false);
   };
 
   return (
-    <nav className="flex justify-between items-center h-16 px-4 py-4 bg-white shadow-md sticky top-0">
+    <nav className="flex justify-between items-center h-16 px-4 lg:px-24 py-4 bg-white shadow-md sticky top-0 z-50">
       {/* Brand */}
-      <div className="flex items-center space-x-2">
-        <div className="font-bold text-xl text-primary">MentorSpace</div>
+      <div className="flex items-center space-x-8">
+        <span className="text-2xl font-bold text-primary">
+          Mentor<span className="text-blue-600">Space</span>
+        </span>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-6 lg:space-x-8">
         {/* Notifications */}
-        <div className="relative cursor-pointer">
-          <FiBell size={24} />
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-            3
-          </span>
-        </div>
+        <DropdownMenu.Root open={showNotifications} onOpenChange={setShowNotifications}>
+          <DropdownMenu.Trigger className="relative cursor-pointer">
+            <FiBell size={24} />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+              3
+            </span>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content className="absolute bg-white shadow-lg rounded p-4 mt-2 right-0">
+            <p className="text-sm text-gray-600">Notification 1</p>
+            <p className="text-sm text-gray-600">Notification 2</p>
+            <p className="text-sm text-gray-600">Notification 3</p>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
 
         {/* Profile */}
-        <div className="w-8 h-8 bg-gray-300 rounded-full cursor-pointer">
+        <div
+          className="w-8 h-8 bg-gray-300 rounded-full cursor-pointer"
+          onClick={() => router.push('/mentorDashboard/screens/Profile')}
+        >
           {/* Profile picture or default avatar */}
         </div>
 
@@ -46,9 +61,9 @@ const Navbar = () => {
 
       {/* Logout Confirmation Dialog */}
       {showLogoutDialog && (
-        <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-lg text-center">
-            <p className="mb-4">Are you sure you want to log out?</p>
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg text-center w-80">
+            <p className="mb-4 text-lg">Are you sure you want to log out?</p>
             <div className="flex justify-center space-x-4">
               <button
                 onClick={() => setShowLogoutDialog(false)}
