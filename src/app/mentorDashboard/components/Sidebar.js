@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';  // Import Next.js Link component
-import { FiMenu, FiHome, FiUser, FiUserPlus ,FiCalendar, FiFileText, FiBarChart2 } from 'react-icons/fi';
+import Link from 'next/link'; // Import Next.js Link component
+import { FiMenu, FiHome, FiUser, FiUserPlus, FiCalendar, FiFileText, FiBarChart2 } from 'react-icons/fi';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -17,6 +17,7 @@ const Sidebar = () => {
     { id: 4, label: 'Requests', icon: <FiUserPlus />, link: '/mentorDashboard/screens/Requests' },
     { id: 5, label: 'Resources', icon: <FiFileText />, link: '/mentorDashboard/screens/Resources' },
     { id: 6, label: 'Analytics', icon: <FiBarChart2 />, link: '/mentorDashboard/screens/Analytics' },
+    { id: 7, label: 'Full Profile', icon: <FiUser />, link: '/mentorDashboard/screens/FullProfile', hidden: true },
   ];
 
   return (
@@ -35,18 +36,19 @@ const Sidebar = () => {
 
       {/* Navigation Menu */}
       <nav className="mt-4 flex flex-col items-center">
-        <ul className="space-y-2 w-full">
+        <ul className="space-y-4 flex flex-col items-center w-full">
           {navItems.map((item) => (
             <li
               key={item.id}
-              className="flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer group w-full justify-center"
+              className={`flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer group w-full justify-center ${
+                item.hidden ? 'hidden' : ''
+              }`}
             >
-              {/* Removed <a> tag, directly using Link for navigation */}
-              <Link href={item.link} className="flex items-center w-full">
-                <span className="text-xl">{item.icon}</span>
+              <Link href={item.link} className="flex flex-col items-center text-center w-full">
+                <span className="text-2xl">{item.icon}</span>
                 <span
-                  className={`ml-4 text-sm ${
-                    isCollapsed ? 'hidden' : 'inline-block'
+                  className={`text-sm mt-1 ${
+                    isCollapsed ? 'hidden' : 'block'
                   } group-hover:text-primary`}
                 >
                   {item.label}

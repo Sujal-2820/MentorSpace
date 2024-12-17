@@ -1,53 +1,27 @@
-'use client'
+'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-const RequestCard = ({ type, name, email, skills, purpose, socialLinks, onAccept, onDecline }) => (
-  <div className="bg-white p-4 rounded-lg shadow-md mb-4">
-    <div className="flex justify-between items-center">
-      <h2 className="text-xl font-semibold">{type} Request</h2>
-      <div className="flex space-x-4">
-        <button
-          onClick={onAccept}
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-        >
-          Accept
-        </button>
-        <button
-          onClick={onDecline}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-        >
-          Decline
-        </button>
-      </div>
+const RequestCard = ({ name, type, onViewProfile }) => (
+  <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex justify-between items-center">
+    <div>
+      <h2 className="text-lg font-semibold">{name}</h2>
+      <p className="text-sm text-gray-600">{type} Request</p>
     </div>
-    <div className="mt-4">
-      <p className="text-sm">Name: {name}</p>
-      <p className="text-sm">Email: {email}</p>
-      <p className="text-sm">Skills: {skills.join(', ')}</p>
-      <p className="text-sm">Purpose: {purpose}</p>
-      <div className="mt-2">
-        <p className="text-sm font-medium">Social Links:</p>
-        <div className="space-x-4">
-          {socialLinks.map((link, index) => (
-            <a
-              key={index}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline"
-            >
-              {link.name}
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
+    <button
+      onClick={onViewProfile}
+      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+    >
+      View Profile
+    </button>
   </div>
 );
 
 const Requests = () => {
-  const [connectionRequests] = useState([
+  const router = useRouter();
+
+  const connectionRequests = [
     {
       name: 'John Doe',
       email: 'john@example.com',
@@ -58,10 +32,9 @@ const Requests = () => {
         { name: 'Twitter', url: 'https://twitter.com/johndoe' },
       ],
     },
-    // Add more connection requests here if needed
-  ]);
+  ];
 
-  const [sessionRequests] = useState([
+  const sessionRequests = [
     {
       name: 'Jane Smith',
       email: 'jane@example.com',
@@ -72,19 +45,18 @@ const Requests = () => {
         { name: 'GitHub', url: 'https://github.com/janesmith' },
       ],
     },
-    // Add more session requests here if needed
-  ]);
+  ];
 
-  const handleAccept = (requestType) => {
-    console.log(`${requestType} request accepted`);
-  };
-
-  const handleDecline = (requestType) => {
-    console.log(`${requestType} request declined`);
+  const handleViewProfile = (profile) => {
+    router.push(`/mentorDashboard/screens/FullProfile?name=${encodeURIComponent(profile.name)}&email=${encodeURIComponent(
+      profile.email
+    )}&skills=${encodeURIComponent(profile.skills.join(','))}&purpose=${encodeURIComponent(
+      profile.purpose
+    )}&socialLinks=${encodeURIComponent(JSON.stringify(profile.socialLinks))}`);
   };
 
   return (
-    <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 py-8">
+    <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16">
       <h1 className="text-2xl font-semibold">Requests</h1>
       <p className="mt-4">Here, you can view and manage connection and session requests.</p>
 
@@ -94,14 +66,9 @@ const Requests = () => {
         {connectionRequests.map((request, index) => (
           <RequestCard
             key={index}
-            type="Connection"
             name={request.name}
-            email={request.email}
-            skills={request.skills}
-            purpose={request.purpose}
-            socialLinks={request.socialLinks}
-            onAccept={() => handleAccept('Connection')}
-            onDecline={() => handleDecline('Connection')}
+            type="Connection"
+            onViewProfile={() => handleViewProfile(request)}
           />
         ))}
       </div>
@@ -112,14 +79,9 @@ const Requests = () => {
         {sessionRequests.map((request, index) => (
           <RequestCard
             key={index}
-            type="Session"
             name={request.name}
-            email={request.email}
-            skills={request.skills}
-            purpose={request.purpose}
-            socialLinks={request.socialLinks}
-            onAccept={() => handleAccept('Session')}
-            onDecline={() => handleDecline('Session')}
+            type="Session"
+            onViewProfile={() => handleViewProfile(request)}
           />
         ))}
       </div>
