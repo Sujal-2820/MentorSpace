@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link'; // Import Next.js Link component
+import Link from 'next/link';
 import { FiMenu, FiHome, FiUser, FiUserPlus, FiCalendar, FiFileText, FiBarChart2 } from 'react-icons/fi';
 
 const Sidebar = () => {
@@ -40,19 +40,18 @@ const Sidebar = () => {
           {navItems.map((item) => (
             <li
               key={item.id}
-              className={`flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer group w-full justify-center ${
+              className={`flex justify-center items-center px-4 py-2 hover:bg-gray-700 cursor-pointer group w-full ${
                 item.hidden ? 'hidden' : ''
               }`}
             >
-              <Link href={item.link} className="flex flex-col items-center text-center w-full">
+              <Link
+                href={item.link}
+                className="flex items-center justify-center space-x-3 w-full"
+              >
                 <span className="text-2xl">{item.icon}</span>
-                <span
-                  className={`text-sm mt-1 ${
-                    isCollapsed ? 'hidden' : 'block'
-                  } group-hover:text-primary`}
-                >
-                  {item.label}
-                </span>
+                {!isCollapsed && (
+                  <span className="text-sm group-hover:text-primary">{item.label}</span>
+                )}
               </Link>
             </li>
           ))}
