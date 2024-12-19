@@ -4,7 +4,7 @@ const DashboardPage = () => {
   return (
     <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 py-6">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        Welcome to the Mentor Dashboard
+        Welcome to the Mentee Dashboard
       </h1>
 
       {/* Mentor Profile Section */}
