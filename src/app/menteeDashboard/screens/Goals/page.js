@@ -1,6 +1,9 @@
+'use client'
+
 import React, { useState } from 'react';
 import { ProgressBar } from 'react-bootstrap';
-import { Select } from '@radix-ui/react-select';
+import * as Select from '@radix-ui/react-select';
+
 
 const GoalsPage = () => {
   const [goals, setGoals] = useState([]);
@@ -51,7 +54,7 @@ const GoalsPage = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 py-6">
       <h1 className="text-2xl font-bold mb-4">Goals and Progress</h1>
 
       {/* Add New Goal */}
@@ -77,32 +80,63 @@ const GoalsPage = () => {
         <div className="mb-4">
           <label className="block mb-2 font-medium">Assign to:</label>
           <Select.Root
+            value={newGoal.assignedTo}
             onValueChange={(value) =>
-              setNewGoal((prev) => ({ ...prev, assignedTo: value }))
+                setNewGoal((prev) => ({ ...prev, assignedTo: value }))
             }
-          >
-            <Select.Trigger className="p-2 border rounded w-full">
-              <Select.Value
+            >
+            <Select.Trigger
+                className="p-2 border rounded w-full flex justify-between items-center"
+            >
+                <Select.Value
                 placeholder="Select Mentor or Session"
-                value={newGoal.assignedTo}
-              />
+                className="text-left flex-grow"
+                />
+                <Select.Icon>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                >
+                    <path
+                    fillRule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                    />
+                </svg>
+                </Select.Icon>
             </Select.Trigger>
-            <Select.Content>
-              <Select.Item value="">
-                <Select.ItemText>None</Select.ItemText>
-              </Select.Item>
-              {mentors.map((mentor) => (
-                <Select.Item key={mentor} value={mentor}>
-                  <Select.ItemText>{mentor}</Select.ItemText>
-                </Select.Item>
-              ))}
-              {sessions.map((session) => (
-                <Select.Item key={session} value={session}>
-                  <Select.ItemText>{session}</Select.ItemText>
-                </Select.Item>
-              ))}
+            <Select.Content className="border rounded shadow-md bg-white">
+                <Select.Viewport>
+                <Select.Group>
+                    <Select.Label className="px-2 py-1 font-medium">Mentors</Select.Label>
+                    {mentors.map((mentor) => (
+                    <Select.Item
+                        key={mentor}
+                        value={mentor}
+                        className="px-4 py-2 hover:bg-gray-100 focus:bg-gray-200 cursor-pointer"
+                    >
+                        <Select.ItemText>{mentor}</Select.ItemText>
+                    </Select.Item>
+                    ))}
+                    <Select.Separator className="h-px bg-gray-300 my-1" />
+                    <Select.Label className="px-2 py-1 font-medium">Sessions</Select.Label>
+                    {sessions.map((session) => (
+                    <Select.Item
+                        key={session}
+                        value={session}
+                        className="px-4 py-2 hover:bg-gray-100 focus:bg-gray-200 cursor-pointer"
+                    >
+                        <Select.ItemText>{session}</Select.ItemText>
+                    </Select.Item>
+                    ))}
+                </Select.Group>
+                </Select.Viewport>
             </Select.Content>
-          </Select.Root>
+            </Select.Root>
+
+
         </div>
 
         <div className="mb-4">
