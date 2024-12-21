@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { FiMenu, FiHome, FiUser, FiUserPlus, FiCalendar, FiFileText, FiBarChart2 } from 'react-icons/fi';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const pathname = usePathname();  // Hook to get the current pathname
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
@@ -46,11 +48,18 @@ const Sidebar = () => {
             >
               <Link
                 href={item.link}
-                className="flex items-center justify-center space-x-3 w-full"
+                className={`flex items-center justify-center space-x-3 w-full relative ${
+                  pathname === item.link ? 'text-highlight' : 'text-white'
+                }`}
               >
                 <span className="text-2xl">{item.icon}</span>
                 {!isCollapsed && (
-                  <span className="text-sm group-hover:text-primary">{item.label}</span>
+                  <span className="text-sm group-hover:text-primary transition-colors duration-200">
+                    {item.label}
+                  </span>
+                )}
+                {pathname === item.link && (
+                  <span className="absolute left-0 top-0 h-full w-1 bg-primary transition-all duration-300 ease-in-out" />
                 )}
               </Link>
             </li>

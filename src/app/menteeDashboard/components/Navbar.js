@@ -45,7 +45,7 @@ const Navbar = () => {
         {/* Profile */}
         <div
           className="w-8 h-8 bg-gray-300 rounded-full cursor-pointer"
-          onClick={() => router.push('/mentorDashboard/screens/Profile')}
+          onClick={() => router.push('/menteeDashboard/screens/Profile')}
         >
           {/* Profile picture or default avatar */}
         </div>
