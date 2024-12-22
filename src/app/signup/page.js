@@ -58,6 +58,7 @@ export default function SignUp() {
           created_at: new Date().toISOString(),
         },
       ]);
+ 
   
       if (insertError) {
         throw insertError;
