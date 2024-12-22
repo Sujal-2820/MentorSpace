@@ -1,14 +1,51 @@
+//signin/page.js
+
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navbar from '../components/home/Navbar'
+import { supabase } from '../../lib/supabase-client'
 
 export default function SignIn() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const router = useRouter()
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
+
+  const handleSignIn = async (e) => {
+    e.preventDefault()
+    setErrorMessage('') // Clear previous errors
+
+    // Validate input fields
+    if (!email || !password) {
+      setErrorMessage('Both email and password are required.')
+      return
+    }
+
+    try {
+      // Attempt to sign in with Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        setErrorMessage(error.message)
+        return
+      }
+
+      // Redirect user to dashboard on successful login
+      router.push('/dashboard')
+    } catch (err) {
+      setErrorMessage('Something went wrong. Please try again.')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,7 +75,10 @@ export default function SignIn() {
         <div className="w-full md:w-1/2 flex justify-center items-center p-8">
           <div className="w-full max-w-md">
             <h1 className="text-3xl font-bold text-foreground mb-8">Sign In to Your Account</h1>
-            <form className="space-y-6">
+            {errorMessage && (
+              <div className="mb-4 text-red-500 text-sm">{errorMessage}</div>
+            )}
+            <form className="space-y-6" onSubmit={handleSignIn}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                   Email Address
@@ -48,6 +88,8 @@ export default function SignIn() {
                   name="email"
                   type="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-background text-foreground"
                   placeholder="you@example.com"
                 />
@@ -62,6 +104,8 @@ export default function SignIn() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary bg-background text-foreground"
                     placeholder="••••••••"
                   />
@@ -81,24 +125,6 @@ export default function SignIn() {
                       </svg>
                     )}
                   </button>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-                  />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-foreground">
-                    Remember me
-                  </label>
-                </div>
-                <div className="text-sm">
-                  <a href="#" className="font-medium text-primary hover:text-opacity-80">
-                    Forgot your password?
-                  </a>
                 </div>
               </div>
               <div>

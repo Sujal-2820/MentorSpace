@@ -23,7 +23,7 @@ export default function Navbar() {
 
           {/* Right Side: Login and Sign Up */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/login" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">Login</Link>
+            <Link href="/signin" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">Login</Link>
             <Link href="/signup" className="bg-foreground text-white hover:bg-opacity-90 px-6 py-2 rounded-full text-md font-medium">Sign Up</Link>
           </div>
           <div className="md:hidden flex items-center">
@@ -62,7 +62,7 @@ export default function Navbar() {
           <Link href="/dashboard" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Dashboard</Link>
           <Link href="/about" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">About</Link>
           <Link href="/features" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Features</Link>
-          <Link href="/login" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Login</Link>
+          <Link href="/signin" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Login</Link>
           <Link href="/signup" className="bg-foreground text-white hover:bg-opacity-90 block px-3 py-2 rounded-md text-base font-medium">Sign Up</Link>
         </div>
       </div>
