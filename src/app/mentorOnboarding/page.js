@@ -8,6 +8,7 @@ import 'react-phone-input-2/lib/style.css'
 import Navbar from '../components/home/Navbar'
 import Footer from '../components/home/Footer'
 import { supabase } from '../../lib/supabase-client'
+import { useRouter } from 'next/navigation'
 
 const KeyCodes = {
   comma: 188,
@@ -17,6 +18,7 @@ const KeyCodes = {
 const delimiters = [KeyCodes.comma, KeyCodes.enter]
 
 export default function MentorOnboarding() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState({
     qualifications: [],
@@ -160,6 +162,7 @@ export default function MentorOnboarding() {
       }
   
       alert('Your details have been successfully saved!');
+      router.push('/mentorDashboard');
   
     } catch (err) {
       console.error('Unexpected error:', err);

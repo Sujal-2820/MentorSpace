@@ -1,10 +1,18 @@
 import React from "react";
 
-const DashboardPage = () => {
+const DashboardPage = ({ user, mentorDetails }) => {
+  if (!user || !mentorDetails) {
+    return (
+      <div className="text-center py-6">
+        <p className="text-lg text-gray-600">Loading mentor details...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 py-6">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        Welcome to the Mentor Dashboard
+        Welcome to the your Dashboard
       </h1>
 
       {/* Mentor Profile Section */}
@@ -12,7 +20,7 @@ const DashboardPage = () => {
         {/* Profile Image */}
         <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
           <img
-            src="/path-to-mentor-image.jpg" // Replace with dynamic path to mentor image
+            src={mentorDetails.profile_image_url} // Use dynamic image URL
             alt="Mentor"
             className="w-full h-full object-cover"
           />
@@ -20,37 +28,25 @@ const DashboardPage = () => {
 
         {/* Mentor Information */}
         <div className="flex-1">
-          <h2 className="text-3xl font-semibold text-gray-800">John Doe</h2>
-          <p className="text-lg text-gray-600 mb-4">Senior Software Engineer</p>
+          <h2 className="text-3xl font-semibold text-gray-800">{mentorDetails.full_name}</h2>
+          <p className="text-lg text-gray-600 mb-4">{mentorDetails.job_title}</p>
 
           <p className="text-gray-700 mb-4">
-            Experienced mentor in software development, specializing in web
-            technologies, JavaScript, and cloud computing. Passionate about
-            guiding the next generation of developers.
+            {mentorDetails.reason_for_mentorship} {/* Description of the mentor */}
           </p>
 
           {/* Contact Information */}
           <div className="space-y-2 mb-4">
             <p className="text-gray-600">
-              <strong>Email: </strong>johndoe@email.com
+              <strong>Email: </strong>{user.email}
             </p>
-            <p className="text-gray-600">
-              <strong>Phone: </strong>(123) 456-7890
-            </p>
+            {/* Add other contact details if available */}
           </div>
 
           {/* Social Links */}
           <div className="mt-4 space-x-4">
             <a
-              href="https://twitter.com/johndoe"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:text-blue-700"
-            >
-              Twitter
-            </a>
-            <a
-              href="https://linkedin.com/in/johndoe"
+              href={`https://linkedin.com/in/${mentorDetails.linkedin}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:text-blue-700"
@@ -58,13 +54,14 @@ const DashboardPage = () => {
               LinkedIn
             </a>
             <a
-              href="https://github.com/johndoe"
+              href={`https://twitter.com/${mentorDetails.twitter}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-900 hover:text-gray-700"
+              className="text-blue-500 hover:text-blue-700"
             >
-              GitHub
+              Twitter
             </a>
+            {/* Add other links here if available */}
           </div>
         </div>
       </div>
@@ -77,11 +74,9 @@ const DashboardPage = () => {
         <div className="mb-4">
           <h4 className="font-semibold text-gray-700">Skills</h4>
           <ul className="list-disc pl-6 space-y-2">
-            <li className="text-gray-600">JavaScript</li>
-            <li className="text-gray-600">React</li>
-            <li className="text-gray-600">Node.js</li>
-            <li className="text-gray-600">Cloud Computing (AWS, Azure)</li>
-            <li className="text-gray-600">Mentoring & Coaching</li>
+            {mentorDetails.skills.map((skill, index) => (
+              <li key={index} className="text-gray-600">{skill}</li>
+            ))}
           </ul>
         </div>
 
@@ -89,9 +84,9 @@ const DashboardPage = () => {
         <div className="mb-4">
           <h4 className="font-semibold text-gray-700">Qualifications</h4>
           <ul className="list-disc pl-6 space-y-2">
-            <li className="text-gray-600">B.S. in Computer Science from XYZ University</li>
-            <li className="text-gray-600">Certified AWS Solutions Architect</li>
-            <li className="text-gray-600">Certified Scrum Master (CSM)</li>
+            {mentorDetails.qualifications.map((qualification, index) => (
+              <li key={index} className="text-gray-600">{qualification}</li>
+            ))}
           </ul>
         </div>
 
@@ -99,25 +94,21 @@ const DashboardPage = () => {
         <div className="mb-4">
           <h4 className="font-semibold text-gray-700">Expertise</h4>
           <p className="text-gray-600">
-            Specializing in full-stack web development, JavaScript frameworks (React,
-            Angular), and cloud solutions. Experienced in guiding professionals through
-            career development and technical challenges.
+            {mentorDetails.expertise}
           </p>
         </div>
 
         {/* Location */}
         <div className="mb-4">
           <h4 className="font-semibold text-gray-700">Location</h4>
-          <p className="text-gray-600">San Francisco, CA, USA</p>
+          <p className="text-gray-600">{mentorDetails.location}</p>
         </div>
 
         {/* Mentoring Method */}
         <div className="mb-4">
           <h4 className="font-semibold text-gray-700">Mentoring Method</h4>
           <p className="text-gray-600">
-            John Doe offers a mix of one-on-one sessions, group coaching, and hands-on coding workshops.
-            His approach focuses on real-world application, empowering mentees with the skills and
-            confidence to thrive in their careers.
+            {mentorDetails.mentoring_method}
           </p>
         </div>
       </div>
