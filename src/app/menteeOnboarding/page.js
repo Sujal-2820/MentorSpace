@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import 'react-phone-input-2/lib/style.css'
 import Navbar from '../components/home/Navbar'
 import Footer from '../components/home/Footer'
+import { supabase } from '../../lib/supabase-client'
 
 const KeyCodes = {
   comma: 188,
@@ -19,12 +20,18 @@ export default function MenteeOnboarding() {
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState({
     skills: [],
+    profileImage: null,
   })
+  const [loading, setLoading] = useState(false)
   const questionRef = useRef(null)
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prevData => ({ ...prevData, [name]: value }))
+    const { name, value, files } = e.target
+    if (name === 'profileImage') {
+      setFormData({ ...formData, profileImage: files[0] })
+    } else {
+      setFormData(prevData => ({ ...prevData, [name]: value }))
+    }
   }
 
   const handleTagChange = (name) => (tags) => {
@@ -57,11 +64,111 @@ export default function MenteeOnboarding() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const requiredFields = ['fullName', 'age', 'location', 'currentStatus', 'reasonForMentorship']
+    const missingFields = requiredFields.filter(field => !formData[field])
+    
+    if (missingFields.length > 0) {
+      alert(`Please fill in the following required fields: ${missingFields.join(', ')}`)
+      return false
+    }
+    return true
+  }
+
+  const uploadProfileImage = async (menteeId, file) => {
+    const fileName = `profileImages/mentee/${menteeId}_${file.name}`
+  
+    const { data, error } = await supabase.storage
+      .from('profileImages')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+      })
+  
+    if (error) {
+      throw new Error(`Image upload failed: ${error.message}`)
+    }
+  
+    const { data: publicUrlData, error: urlError } = supabase.storage
+      .from('profileImages')
+      .getPublicUrl(fileName)
+  
+    if (urlError) {
+      throw new Error(`Failed to get image URL: ${urlError.message}`)
+    }
+  
+    return publicUrlData.publicUrl
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    // Here you would typically send the data to your backend
-    // and then redirect to the dashboard
+    if (!validateForm()) return
+    setLoading(true)
+
+    try {
+      const { data: user, error: userError } = await supabase.auth.getUser()
+
+      if (userError || !user) {
+        console.error('Error fetching user:', userError?.message || 'User not logged in')
+        alert('You need to be logged in to submit this form.')
+        return
+      }
+
+      console.log("User session data:", user)
+
+      const { data: menteeData, error: insertError } = await supabase.from('mentees').insert({
+        user_id: user.user.id,
+        full_name: formData.fullName,
+        age: parseInt(formData.age, 10),
+        location: formData.location,
+        phone: formData.phone,
+        fields_of_interest: formData.fieldsOfInterest,
+        skills: formData.skills.map(tag => tag.text),
+        current_status: formData.currentStatus,
+        reason_for_mentorship: formData.reasonForMentorship,
+        specific_goals: formData.specificGoals,
+        areas_of_guidance: formData.areasOfGuidance,
+        preferred_mentorship_style: formData.preferredMentorshipStyle,
+        availability: parseInt(formData.availability, 10),
+        preferred_meeting_times: formData.preferredMeetingTimes,
+      }).select()
+
+      if (insertError) {
+        console.error('Error inserting data:', insertError.message)
+        alert('Error saving your details. Please try again.')
+        return
+      }
+
+      const menteeId = menteeData[0].id
+      console.log('Mentee ID:', menteeId)
+
+      let profileImageUrl = null
+
+      if (formData.profileImage) {
+        profileImageUrl = await uploadProfileImage(menteeId, formData.profileImage)
+        console.log('Profile Image URL:', profileImageUrl)
+      }
+
+      if (profileImageUrl) {
+        const { error: updateError } = await supabase
+          .from('mentees')
+          .update({ profile_image_url: profileImageUrl })
+          .eq('id', menteeId)
+
+        if (updateError) {
+          console.error('Error updating profile image URL:', updateError.message)
+          alert('Error saving your profile image. Please try again.')
+        }
+      }
+
+      alert('Your details have been successfully saved!')
+
+    } catch (err) {
+      console.error('Unexpected error:', err)
+      alert('An unexpected error occurred. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const windows = [
@@ -79,7 +186,13 @@ export default function MenteeOnboarding() {
           />
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Profile Image</label>
-            <input type="file" accept="image/*" className="w-full" />
+            <input 
+              type="file" 
+              name="profileImage" 
+              accept="image/*" 
+              className="w-full" 
+              onChange={handleInputChange}
+            />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Contact Number</label>
@@ -153,12 +266,14 @@ export default function MenteeOnboarding() {
             options={['Student', 'Recent graduate', 'Entry-level professional', 'Mid-career professional']}
             value={formData.currentStatus || ''}
             onChange={handleInputChange}
+            required
           />
           <TextArea
             label="Reason for Seeking Mentorship"
             name="reasonForMentorship"
             value={formData.reasonForMentorship || ''}
             onChange={handleInputChange}
+            required
           />
           <TextArea
             label="Specific Goals"
@@ -224,7 +339,26 @@ export default function MenteeOnboarding() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+            <div className="mb-4">
+              <div className="relative pt-1">
+                <div className="flex mb-2 items-center justify-between">
+                  <div>
+                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-black bg-gray-200">
+                      Progress
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs font-semibold inline-block text-black">
+                      {Math.round(((currentStep + 1) / windows.length) * 100)}%
+                    </span>
+                  </div>
+                </div>
+                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                  <div style={{ width: `${((currentStep + 1) / windows.length) * 100}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-black"></div>
+                </div>
+              </div>
+            </div>
             <div ref={questionRef}>
               <h3 className="text-lg font-medium text-gray-900 mb-4">{windows[currentStep].title}</h3>
               {windows[currentStep].content}
@@ -252,9 +386,11 @@ export default function MenteeOnboarding() {
               ) : (
                 <button
                   type="submit"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
                 >
-                  Complete Onboarding
+                  {loading ? 'Submitting...' : 'Complete Onboarding'}
                 </button>
               )}
             </div>
@@ -268,99 +404,101 @@ export default function MenteeOnboarding() {
 }
 
 function Input({ label, name, type = 'text', value, onChange, required = false }) {
-    return (
-      <div className="mb-4">
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
-          {label}
-        </label>
-        <input
-          type={type}
-          id={name}
-          name={name}
-          value={value}
-          onChange={onChange}
-          required={required}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
-        />
-      </div>
-    )
-  }
-  
-  function Select({ label, name, options, value, onChange }) {
-    return (
-      <div className="mb-4">
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
-          {label}
-        </label>
-        <select
-          id={name}
-          name={name}
-          value={value}
-          onChange={onChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
-        >
-          <option value="">Select an option</option>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </div>
-    )
-  }
-  
-  function TextArea({ label, name, value, onChange }) {
-    return (
-      <div className="mb-4">
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
-          {label}
-        </label>
-        <textarea
-          id={name}
-          name={name}
-          value={value}
-          onChange={onChange}
-          rows="4"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
-        ></textarea>
-      </div>
-    )
-  }
-  
-  function MultipleSelect({ label, name, options, values, onChange, onRemove }) {
-    return (
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-        <select
-          name={name}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black mb-2"
-        >
-          <option value="">Select an option</option>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <div className="flex flex-wrap gap-2">
-          {values.map((value, index) => (
-            <span
-              key={index}
-              className="bg-gray-200 px-2 py-1 rounded-full text-sm flex items-center"
+  return (
+    <div className="mb-4">
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <input
+        type={type}
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+      />
+    </div>
+  )
+}
+
+function Select({ label, name, options, value, onChange, required = false }) {
+  return (
+    <div className="mb-4">
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <select
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+      >
+        <option value="">Select an option</option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
+}
+
+function TextArea({ label, name, value, onChange, required = false }) {
+  return (
+    <div className="mb-4">
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <textarea
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        rows="4"
+        required={required}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+      ></textarea>
+    </div>
+  )
+}
+
+function MultipleSelect({ label, name, options, values, onChange, onRemove }) {
+  return (
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <select
+        name={name}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black mb-2"
+      >
+        <option value="">Select an option</option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      <div className="flex flex-wrap gap-2">
+        {values.map((value, index) => (
+          <span
+            key={index}
+            className="bg-gray-200 px-2 py-1 rounded-full text-sm flex items-center"
+          >
+            {value}
+            <button
+              type="button"
+              onClick={() => onRemove(index)}
+              className="ml-2 text-red-500 hover:text-red-700"
             >
-              {value}
-              <button
-                type="button"
-                onClick={() => onRemove(index)}
-                className="ml-2 text-red-500 hover:text-red-700"
-              >
-                &times;
-              </button>
-            </span>
-          ))}
-        </div>
+              &times;
+            </button>
+          </span>
+        ))}
       </div>
-    )
-  }
+    </div>
+  )
+}

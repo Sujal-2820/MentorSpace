@@ -47,12 +47,12 @@ export default function MentorOnboarding() {
   }
 
   const uploadProfileImage = async (mentorId, file) => {
-    const fileName = `profileImage_${mentorId}`;
-    
+    const fileName = `profileImages/mentor/${mentorId}_${file.name}`;
+  
     // Upload the image file
     const { data, error } = await supabase.storage
       .from('profileImages')
-      .upload(`profileImage/${fileName}`, file, {
+      .upload(fileName, file, {
         cacheControl: '3600',
         upsert: false,
       });
@@ -64,7 +64,7 @@ export default function MentorOnboarding() {
     // Get the public URL of the uploaded image
     const { data: publicUrlData, error: urlError } = supabase.storage
       .from('profileImages')
-      .getPublicUrl(`profileImage/${fileName}`);
+      .getPublicUrl(fileName);
   
     if (urlError) {
       throw new Error(`Failed to get image URL: ${urlError.message}`);
@@ -73,6 +73,7 @@ export default function MentorOnboarding() {
     // Return the public URL
     return publicUrlData.publicUrl;
   };
+  
   
 
   const removeItem = (name, index) => {
@@ -123,7 +124,11 @@ export default function MentorOnboarding() {
         availability: parseInt(formData.availability, 10),
         meeting_format: formData.meetingFormat,
         expected_salary_range: formData.salaryRange,
-        social_profile_link: formData.socialProfileLink,
+        expected_outcomes: formData.expectedOutcomes,
+        reason_for_mentorship: formData.reasonForMentorship,
+        linkedin: formData.linkedin,
+        twitter: formData.twitter,
+        other_link: formData.otherLink,
       }).select();
   
       if (insertError) {
@@ -348,9 +353,21 @@ export default function MentorOnboarding() {
             onChange={handleInputChange}
           />
           <Input
-            label="Social Profile Link"
-            name="socialProfileLink"
-            value={formData.socialProfileLink || ''}
+            label="LinkedIn Profile"
+            name="linkedin"
+            value={formData.linkedin || ''}
+            onChange={handleInputChange}
+          />
+          <Input
+            label="Twitter Profile"
+            name="twitter"
+            value={formData.twitter || ''}
+            onChange={handleInputChange}
+          />
+          <Input
+            label="Other Link"
+            name="otherLink"
+            value={formData.otherLink || ''}
             onChange={handleInputChange}
           />
         </div>
