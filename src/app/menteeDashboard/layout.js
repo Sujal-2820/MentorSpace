@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import { MenteeDashboardProvider } from './MenteeDashboardContext';
 
 export const metadata = {
   title: 'Dashboard',
@@ -8,6 +9,7 @@ export const metadata = {
 
 export default function DashboardLayout({ children }) {
   return (
+    <MenteeDashboardProvider>
     <div className="min-h-screen flex flex-col bg-gray-100">
       {/* Navbar */}
       <Navbar />
@@ -23,5 +25,6 @@ export default function DashboardLayout({ children }) {
         </main>
       </div>
     </div>
+    </MenteeDashboardProvider>
   );
 }

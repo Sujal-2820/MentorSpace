@@ -19,6 +19,7 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter]
 
 export default function MenteeOnboarding() {
   const router = useRouter();
+  const [imageError, setImageError] = useState('');
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState({
     skills: [],
@@ -28,13 +29,32 @@ export default function MenteeOnboarding() {
   const questionRef = useRef(null)
 
   const handleInputChange = (e) => {
-    const { name, value, files } = e.target
-    if (name === 'profileImage') {
-      setFormData({ ...formData, profileImage: files[0] })
-    } else {
-      setFormData(prevData => ({ ...prevData, [name]: value }))
-    }
-  }
+      const { name, value, files } = e.target;
+      if (name === 'profileImage') {
+        const file = files[0];
+        if (file) {
+          const validFormats = ['image/jpeg', 'image/png', 'image/jpg'];
+          const maxSize = 2 * 1024 * 1024; // 2 MB
+    
+          // Validate file format
+          if (!validFormats.includes(file.type)) {
+            setImageError('Please select an image in JPEG, JPG, or PNG format.');
+            return;
+          }
+    
+          // Validate file size
+          if (file.size > maxSize) {
+            setImageError('Image size should not exceed 2 MB.');
+            return;
+          } 
+    
+          setImageError(''); // Clear error if valid
+          setFormData({ ...formData, profileImage: file });
+        }
+      } else {
+        setFormData(prevData => ({ ...prevData, [name]: value }));
+      }
+  };
 
   const handleTagChange = (name) => (tags) => {
     setFormData(prevData => ({ ...prevData, [name]: tags }))

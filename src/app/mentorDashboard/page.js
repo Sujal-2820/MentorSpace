@@ -5,9 +5,17 @@ import { useMentorDashboard } from './MentorDashboardContext'; // Adjust the imp
 
 const DashboardPage = () => {
   const { user, mentorDetails, loading } = useMentorDashboard(); // Accessing context values
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  console.log("User details: ", user);
-  console.log("mentorDetails: ", mentorDetails);
+  const handleImageClick = () => {
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = (e) => {
+    if (e.target === e.currentTarget) {
+      setIsPopupOpen(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -34,13 +42,25 @@ const DashboardPage = () => {
       {/* Mentor Profile Section */}
       <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col lg:flex-row items-start space-y-6 lg:space-y-0 lg:space-x-8 transition-all duration-300 ease-in-out hover:shadow-xl">
         {/* Profile Image */}
-        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300 transition-transform duration-300 ease-in-out hover:scale-105">
+        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300 transition-transform duration-300 ease-in-out hover:scale-105" onClick={handleImageClick}>
           <img
             src={mentorDetails.profile_image_url}
             alt="Mentor"
             className="w-full h-full object-cover"
           />
         </div>
+
+        {/* Popup for Full Image */}
+        {isPopupOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center" onClick={handleClosePopup}>
+            <img
+              src={menteeDetails.profile_image_url}
+              alt="Full Mentee"
+              className="max-w-full max-h-full"
+            />
+          </div>
+        )}
+
 
         {/* Mentor Information */}
         <div className="flex-1">
