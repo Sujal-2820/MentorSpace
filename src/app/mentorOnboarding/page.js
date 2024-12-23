@@ -26,16 +26,34 @@ export default function MentorOnboarding() {
     profileImage: null, // Make sure to store the image file here
   })
   const [loading, setLoading] = useState(false)  // Add loading state for submission
+  const [imageError, setImageError] = useState('');
   const questionRef = useRef(null)
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'profileImage') {
-      setFormData({ ...formData, profileImage: files[0] });
+      const file = files[0];
+      if (file) {
+        const validFormats = ['image/jpeg', 'image/png', 'image/jpg'];
+        const maxSize = 2 * 1024 * 1024; // 2 MB
+  
+        if (!validFormats.includes(file.type)) {
+          setImageError('Please select an image in JPEG, JPG, or PNG format.');
+          return;
+        }
+  
+        if (file.size > maxSize) {
+          setImageError('Image size should not exceed 2 MB.');
+          return;
+        }
+  
+        setImageError(''); // Clear error if valid
+        setFormData({ ...formData, profileImage: file });
+      }
     } else {
       setFormData({ ...formData, [name]: value });
     }
-  }
+  };
 
   const handleTagChange = (name) => (tags) => {
     setFormData(prevData => ({ ...prevData, [name]: tags }))
@@ -115,6 +133,7 @@ export default function MentorOnboarding() {
       const { data: mentorData, error: insertError } = await supabase.from('mentors').insert({
         user_id: user.user.id,
         full_name: formData.fullName,
+        location: formData.location,
         qualifications: formData.qualifications.map(tag => tag.text),
         skills: formData.skills.map(tag => tag.text),
         areas_of_expertise: formData.areasOfExpertise,
@@ -197,6 +216,7 @@ export default function MentorOnboarding() {
               className="w-full" 
               onChange={handleInputChange}
             />
+            {imageError && <p className="text-red-500 text-sm">{imageError}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Contact Number</label>
