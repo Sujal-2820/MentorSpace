@@ -133,6 +133,8 @@ export default function MentorOnboarding() {
       const { data: mentorData, error: insertError } = await supabase.from('mentors').insert({
         user_id: user.user.id,
         full_name: formData.fullName,
+        contact_number: formData.phone,
+        age: formData.age,
         location: formData.location,
         qualifications: formData.qualifications.map(tag => tag.text),
         skills: formData.skills.map(tag => tag.text),
@@ -382,7 +384,7 @@ export default function MentorOnboarding() {
             onChange={handleInputChange}
           />
           <Input
-            label="Twitter Profile"
+            label="Twitter(X) Profile"
             name="twitter"
             value={formData.twitter || ''}
             onChange={handleInputChange}

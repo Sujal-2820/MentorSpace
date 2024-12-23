@@ -6,6 +6,9 @@ import { useMentorDashboard } from './MentorDashboardContext'; // Adjust the imp
 const DashboardPage = () => {
   const { user, mentorDetails, loading } = useMentorDashboard(); // Accessing context values
 
+  console.log("User details: ", user);
+  console.log("mentorDetails: ", mentorDetails);
+
   if (loading) {
     return (
       <div className="text-center py-6">
