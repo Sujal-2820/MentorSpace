@@ -19,33 +19,61 @@ export default function SignIn() {
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
 
   const handleSignIn = async (e) => {
-    e.preventDefault()
-    setErrorMessage('') // Clear previous errors
-
-    // Validate input fields
+    e.preventDefault();
+    setErrorMessage(''); // Clear previous errors
+  
     if (!email || !password) {
-      setErrorMessage('Both email and password are required.')
-      return
+      setErrorMessage('Both email and password are required.');
+      return;
     }
-
+  
     try {
-      // Attempt to sign in with Supabase
+      // Attempt to sign in
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      })
-
+      });
+  
       if (error) {
-        setErrorMessage(error.message)
-        return
+        setErrorMessage(error.message);
+        return;
       }
-
-      // Redirect user to dashboard on successful login
-      router.push('/dashboard')
+  
+      // Retrieve the signed-in user's details
+      const user = data.user;
+      if (!user) {
+        setErrorMessage('Failed to retrieve user details.');
+        return;
+      }
+  
+      // Fetch the user's role from the database
+      const { data: roleData, error: roleError } = await supabase
+        .from('users') // Replace 'users' with your actual table name
+        .select('role')
+        .eq('id', user.id)
+        .single();
+  
+      if (roleError || !roleData) {
+        setErrorMessage('Failed to fetch user role. Please try again.');
+        return;
+      }
+  
+      const userRole = roleData.role;
+  
+      // Redirect user based on their role
+      if (userRole === 'Mentor') {
+        router.push('/mentorDashboard');
+      } else if (userRole === 'Mentee') {
+        router.push('/menteeDashboard');
+      } else {
+        setErrorMessage('Invalid role. Please contact support.');
+      }
     } catch (err) {
-      setErrorMessage('Something went wrong. Please try again.')
+      setErrorMessage('Something went wrong. Please try again.');
+      console.error(err);
     }
-  }
+  };
+  
 
   return (
     <div className="min-h-screen bg-background">

@@ -23,7 +23,9 @@ export default function MentorOnboarding() {
   const [formData, setFormData] = useState({
     qualifications: [],
     skills: [],
-    profileImage: null, // Make sure to store the image file here
+    profileImage: null,
+    availableDays: [],
+    availableTimings: [],
   })
   const [loading, setLoading] = useState(false)  // Add loading state for submission
   const [imageError, setImageError] = useState('');
@@ -63,6 +65,15 @@ export default function MentorOnboarding() {
     setFormData(prevData => ({
       ...prevData,
       [name]: [...(prevData[name] || []), value]
+    }))
+  }
+
+  const handleAvailabilityChange = (type, value) => {
+    setFormData(prevData => ({
+      ...prevData,
+      [type]: prevData[type].includes(value)
+        ? prevData[type].filter(item => item !== value)
+        : [...prevData[type], value]
     }))
   }
 
@@ -144,7 +155,8 @@ export default function MentorOnboarding() {
         industry: formData.industry,
         target_audience: formData.targetAudience,
         mentorship_style: formData.mentorshipStyle,
-        availability: parseInt(formData.availability, 10),
+        available_days: formData.availableDays,
+        available_timings: formData.availableTimings,
         meeting_format: formData.meetingFormat,
         expected_salary_range: formData.salaryRange,
         expected_outcomes: formData.expectedOutcomes,
@@ -337,13 +349,46 @@ export default function MentorOnboarding() {
             value={formData.mentorshipStyle || ''}
             onChange={handleInputChange}
           />
-          <Input
-            label="Availability (hours per week)"
-            name="availability"
-            type="number"
-            value={formData.availability || ''}
-            onChange={handleInputChange}
-          />
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Available Days</label>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: 'Weekdays (Monday to Friday)', value: 'Weekdays' },
+                { label: 'Weekends (Saturday to Sunday)', value: 'Weekends' },
+              ].map((day) => (
+                <label key={day.value} className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.availableDays.includes(day.value)}
+                    onChange={() => handleAvailabilityChange('availableDays', day.value)}
+                    className="form-checkbox h-5 w-5 text-indigo-600"
+                  />
+                  <span className="ml-2 text-gray-700">{day.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Available Timings</label>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+              {[
+                '12 AM to 3 AM', '3 AM to 6 AM', '6 AM to 9 AM', '9 AM to 12 PM',
+                '12 PM to 3 PM', '3 PM to 6 PM', '6 PM to 9 PM', '9 PM to 12 AM'
+              ].map((timing, index) => (
+                <label key={timing} className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.availableTimings.includes(timing)}
+                    onChange={() => handleAvailabilityChange('availableTimings', timing)}
+                    className="form-checkbox h-5 w-5 text-indigo-600"
+                  />
+                  <span className="ml-2 text-gray-700">{timing}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <Select
             label="Preferred Meeting Format"
             name="meetingFormat"

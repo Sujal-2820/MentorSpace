@@ -1,11 +1,14 @@
 'use client';
 
-import React from "react";
+import React, { useState } from "react";
 import { useMentorDashboard } from './MentorDashboardContext'; // Adjust the import path as necessary
 
 const DashboardPage = () => {
   const { user, mentorDetails, loading } = useMentorDashboard(); // Accessing context values
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  console.log(user);
+  console.log(mentorDetails);
 
   const handleImageClick = () => {
     setIsPopupOpen(true);
@@ -199,10 +202,34 @@ const DashboardPage = () => {
           <p className="text-gray-600">{mentorDetails.mentorship_style}</p>
         </div>
 
-        {/* Availability */}
-        <div className="mb-6 bg-green-50 p-4 rounded-lg">
-          <h4 className="font-semibold text-gray-700 mb-2">Availability (hours per week)</h4>
-          <p className="text-gray-600 text-lg font-medium">{mentorDetails.availability} hours</p>
+        {/* Available Days */}
+        <div className="mb-6">
+          <h4 className="font-semibold text-gray-700 mb-2">Available Days</h4>
+          <ul className="list-disc pl-6 space-y-2">
+            {mentorDetails.available_days.map((day, index) => (
+              <li
+                key={index}
+                className="text-gray-600 transition-colors duration-300 hover:text-gray-800"
+              >
+                {day}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Available Timings */}
+        <div className="mb-6">
+          <h4 className="font-semibold text-gray-700 mb-2">Available Timings</h4>
+          <ul className="list-disc pl-6 space-y-2">
+            {mentorDetails.available_timings.map((timing, index) => (
+              <li
+                key={index}
+                className="text-gray-600 transition-colors duration-300 hover:text-gray-800"
+              >
+                {timing}
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Meeting Format */}

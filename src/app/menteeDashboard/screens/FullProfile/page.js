@@ -3,23 +3,34 @@
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { FaStar, FaLinkedin, FaTwitter } from 'react-icons/fa'
+import { supabase } from '../../../../lib/supabase-client' // Import your Supabase client
 
 export default function FullProfile() {
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
+  const mentorId = searchParams.get('id');
+  console.log('Mentor ID:', mentorId)
   const [profileData, setProfileData] = useState(null)
 
   useEffect(() => {
-    const data = {
-      name: searchParams.get('name'),
-      expertise: searchParams.get('expertise'),
-      bio: searchParams.get('bio'),
-      rating: searchParams.get('rating'),
-      available: searchParams.get('available'),
-      skills: JSON.parse(searchParams.get('skills') || '[]'),
-      socialLinks: JSON.parse(searchParams.get('socialLinks') || '[]')
+    if (mentorId) {
+      // Fetch the mentor details using Supabase
+      const fetchMentorDetails = async () => {
+        const { data, error } = await supabase
+          .from('mentors') // Replace with your actual table name
+          .select('*')
+          .eq('id', mentorId)
+          .single() // Get the single mentor data
+
+        if (error) {
+          console.error('Error fetching mentor data:', error)
+        } else {
+          setProfileData(data)
+        }
+      }
+
+      fetchMentorDetails()
     }
-    setProfileData(data)
-  }, [searchParams])
+  }, [mentorId]) // Re-run effect when the mentorId changes
 
   if (!profileData) {
     return (
@@ -38,17 +49,17 @@ export default function FullProfile() {
           <div className="md:flex">
             <div className="md:w-1/3">
               <img
-                src={`https://api.dicebear.com/6.x/initials/svg?seed=${profileData.name}`}
-                alt={profileData.name}
+                src={profileData.profile_image_url || `https://api.dicebear.com/6.x/initials/svg?seed=${profileData.full_name}`}
+                alt={profileData.full_name}
                 className="w-full h-64 object-cover md:h-full"
               />
             </div>
             <div className="md:w-2/3 p-8">
               <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
-                {profileData.expertise}
+                {profileData.areas_of_expertise}
               </div>
               <h1 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                {profileData.name}
+                {profileData.full_name}
               </h1>
               <div className="mt-2 flex items-center">
                 <FaStar className="text-yellow-400 mr-1" />
@@ -57,12 +68,12 @@ export default function FullProfile() {
               <p className="mt-4 text-lg text-gray-500">{profileData.bio}</p>
               <div className="mt-6">
                 <h2 className="text-lg font-medium text-gray-900">Availability</h2>
-                <p className="mt-1 text-gray-500">{profileData.available}</p>
+                <p className="mt-1 text-gray-500">{profileData.available_timings?.join(', ')}</p>
               </div>
               <div className="mt-6">
                 <h2 className="text-lg font-medium text-gray-900">Skills</h2>
                 <div className="mt-2 flex flex-wrap">
-                  {profileData.skills.map((skill, index) => (
+                  {profileData.skills?.map((skill, index) => (
                     <span
                       key={index}
                       className="mr-2 mb-2 px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm"
@@ -75,7 +86,7 @@ export default function FullProfile() {
               <div className="mt-6">
                 <h2 className="text-lg font-medium text-gray-900">Connect</h2>
                 <div className="mt-2 flex space-x-4">
-                  {profileData.socialLinks.map((link, index) => (
+                  {profileData.socialLinks?.map((link, index) => (
                     <a
                       key={index}
                       href={link.url}
@@ -99,4 +110,3 @@ export default function FullProfile() {
     </div>
   )
 }
-

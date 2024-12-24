@@ -1,283 +1,303 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useMenteeDashboard } from '../../MenteeDashboardContext';
+import { motion } from 'framer-motion';
+import { Label } from '@radix-ui/react-label';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { supabase } from '../../../../lib/supabase-client';
 
 export default function Profile() {
-  const [fullName, setFullName] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
-  const [age, setAge] = useState('');
-  const [location, setLocation] = useState('');
-  const [currentRole, setCurrentRole] = useState('');
-  const [fieldOfInterest, setFieldOfInterest] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [reasonForMentorship, setReasonForMentorship] = useState('');
-  const [specificGoals, setSpecificGoals] = useState('');
-  const [preferredGuidance, setPreferredGuidance] = useState('');
-  const [mentorshipStyle, setMentorshipStyle] = useState('');
-  const [availability, setAvailability] = useState('');
-  const [countryCode, setCountryCode] = useState('+1'); // Default country code
-  const [socialLinks, setSocialLinks] = useState({
-    linkedin: '',
-    instagram: '',
-    twitter: '',
-    additionalLink: '',
+  const { user, menteeDetails } = useMenteeDashboard();
+
+  const [profile, setProfile] = useState({
+    full_name: '',
+    age: '',
+    location: '',
+    phone: '',
+    fields_of_interest: [],
+    skills: [],
+    current_status: '',
+    reason_for_mentorship: '',
+    specific_goals: '',
+    areas_of_guidance: [],
+    preferred_mentorship_style: '',
+    availability: '',
+    preferred_meeting_times: ''
   });
 
-  const handleAddSkill = (skill) => {
-    setSkills((prevSkills) => [...prevSkills, skill]);
+  useEffect(() => {
+    if (menteeDetails) {
+      setProfile(menteeDetails);
+    }
+  }, [menteeDetails]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProfile(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleAddFieldOfInterest = (field) => {
-    setFieldOfInterest((prevFields) => [...prevFields, field]);
+  const handleArrayChange = (e, field) => {
+    const value = e.target.value.split(',').map(item => item.trim());
+    setProfile(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = () => {
-    alert('Profile updated successfully');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const { data, error } = await supabase
+        .from('mentees')
+        .update({
+          full_name: profile.full_name,
+          age: profile.age,
+          location: profile.location,
+          phone: profile.phone,
+          fields_of_interest: profile.fields_of_interest,
+          skills: profile.skills,
+          current_status: profile.current_status,
+          reason_for_mentorship: profile.reason_for_mentorship,
+          specific_goals: profile.specific_goals,
+          areas_of_guidance: profile.areas_of_guidance,
+          preferred_mentorship_style: profile.preferred_mentorship_style,
+          availability: profile.availability,
+          preferred_meeting_times: profile.preferred_meeting_times
+        })
+        .eq('id', menteeDetails.id);
+  
+      if (error) throw error;
+  
+      console.log('Updated profile:', data);
+      alert('Profile updated successfully');
+    } catch (error) {
+      console.error('Error updating profile:', error.message);
+      alert('Error updating profile');
+    }
   };
+
+  const inputClass = "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-12";
+  const labelClass = "block text-sm font-medium text-gray-700 mb-1";
 
   return (
     <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 py-6">
-      <h1 className="text-2xl font-semibold">Profile</h1>
-      <form className="mt-6">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {/* Full Name */}
-          <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-              Full Name
-            </label>
-            <input
-              id="fullName"
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Contact Number */}
-          <div>
-            <label htmlFor="contactNumber" className="block text-sm font-medium text-gray-700">
-              Contact Number
-            </label>
-            <div className="flex space-x-2">
-              <input
-                type="tel"
-                value={countryCode}
-                onChange={(e) => setCountryCode(e.target.value)}
-                className="mt-1 block w-20 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                placeholder="+1"
-              />
-              <input
-                id="contactNumber"
-                type="tel"
-                value={contactNumber}
-                onChange={(e) => setContactNumber(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Age */}
-          <div>
-            <label htmlFor="age" className="block text-sm font-medium text-gray-700">
-              Age
-            </label>
-            <input
-              id="age"
-              type="number"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Location */}
-          <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-              Location (City, Country)
-            </label>
-            <input
-              id="location"
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Current Role */}
-          <div>
-            <label htmlFor="currentRole" className="block text-sm font-medium text-gray-700">
-              Current Role
-            </label>
-            <input
-              id="currentRole"
-              type="text"
-              value={currentRole}
-              onChange={(e) => setCurrentRole(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Field of Interest */}
-          <div>
-            <label htmlFor="fieldOfInterest" className="block text-sm font-medium text-gray-700">
-              Field of Interest or Study
-            </label>
-            <select
-              multiple
-              value={fieldOfInterest}
-              onChange={(e) =>
-                setFieldOfInterest(
-                  Array.from(e.target.selectedOptions, (option) => option.value)
-                )
-              }
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="Data Science">Data Science</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Software Development">Software Development</option>
-              <option value="Entrepreneurship">Entrepreneurship</option>
-              {/* Add more fields as necessary */}
-            </select>
-          </div>
-
-          {/* Skills */}
-          <div>
-            <label htmlFor="skills" className="block text-sm font-medium text-gray-700">
-              Skills
-            </label>
-            <div>
-              <input
-                id="skills"
-                type="text"
-                onBlur={(e) => handleAddSkill(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-              <div className="mt-2">
-                {skills.map((skill, index) => (
-                  <span key={index} className="inline-block bg-green-100 text-green-800 text-sm px-2 py-1 rounded-full mr-2 mb-2">
-                    {skill}
-                  </span>
-                ))}
+      <ScrollArea className="h-[calc(100vh-6rem)] pr-4 py-4">
+        <motion.h1 
+          className="text-3xl font-bold mb-8 text-indigo-600"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Mentee Profile
+        </motion.h1>
+        <form onSubmit={handleSubmit} className="space-y-12">
+          <motion.section 
+            className="bg-white p-6 rounded-lg shadow-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">Basic Information</h2>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <Label htmlFor="full_name" className={labelClass}>Full Name</Label>
+                <input
+                  type="text"
+                  id="full_name"
+                  name="full_name"
+                  value={profile.full_name}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="age" className={labelClass}>Age</Label>
+                  <input
+                    type="number"
+                    id="age"
+                    name="age"
+                    value={profile.age}
+                    onChange={handleChange}
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="location" className={labelClass}>Location</Label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={profile.location}
+                    onChange={handleChange}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="phone" className={labelClass}>Phone Number</Label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={profile.phone}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
               </div>
             </div>
-          </div>
+          </motion.section>
 
-          {/* Reason for Mentorship */}
-          <div>
-            <label htmlFor="reasonForMentorship" className="block text-sm font-medium text-gray-700">
-              Why are you looking for a mentor?
-            </label>
-            <input
-              id="reasonForMentorship"
-              type="text"
-              value={reasonForMentorship}
-              onChange={(e) => setReasonForMentorship(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Specific Goals */}
-          <div>
-            <label htmlFor="specificGoals" className="block text-sm font-medium text-gray-700">
-              Specific Goals
-            </label>
-            <input
-              id="specificGoals"
-              type="text"
-              value={specificGoals}
-              onChange={(e) => setSpecificGoals(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Preferred Areas of Guidance */}
-          <div>
-            <label htmlFor="preferredGuidance" className="block text-sm font-medium text-gray-700">
-              Preferred Areas of Guidance
-            </label>
-            <input
-              id="preferredGuidance"
-              type="text"
-              value={preferredGuidance}
-              onChange={(e) => setPreferredGuidance(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Mentorship Style */}
-          <div>
-            <label htmlFor="mentorshipStyle" className="block text-sm font-medium text-gray-700">
-              Mentorship Style
-            </label>
-            <input
-              id="mentorshipStyle"
-              type="text"
-              value={mentorshipStyle}
-              onChange={(e) => setMentorshipStyle(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Availability */}
-          <div>
-            <label htmlFor="availability" className="block text-sm font-medium text-gray-700">
-              Availability
-            </label>
-            <input
-              id="availability"
-              type="text"
-              value={availability}
-              onChange={(e) => setAvailability(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Social Links */}
-          <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Social Links</label>
-            <div className="flex space-x-4">
-              <input
-                type="url"
-                placeholder="LinkedIn"
-                value={socialLinks.linkedin}
-                onChange={(e) => setSocialLinks({ ...socialLinks, linkedin: e.target.value })}
-                className="mt-1 block w-1/4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-              <input
-                type="url"
-                placeholder="Instagram"
-                value={socialLinks.instagram}
-                onChange={(e) => setSocialLinks({ ...socialLinks, instagram: e.target.value })}
-                className="mt-1 block w-1/4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-              <input
-                type="url"
-                placeholder="Twitter"
-                value={socialLinks.twitter}
-                onChange={(e) => setSocialLinks({ ...socialLinks, twitter: e.target.value })}
-                className="mt-1 block w-1/4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-              <input
-                type="url"
-                placeholder="Additional Link"
-                value={socialLinks.additionalLink}
-                onChange={(e) => setSocialLinks({ ...socialLinks, additionalLink: e.target.value })}
-                className="mt-1 block w-1/4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
+          <motion.section 
+            className="bg-white p-6 rounded-lg shadow-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">Professional Information</h2>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <Label htmlFor="current_status" className={labelClass}>Current Status</Label>
+                <input
+                  type="text"
+                  id="current_status"
+                  name="current_status"
+                  value={profile.current_status}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <Label htmlFor="fields_of_interest" className={labelClass}>Fields of Interest</Label>
+                <input
+                  type="text"
+                  id="fields_of_interest"
+                  name="fields_of_interest"
+                  value={profile.fields_of_interest.join(', ')}
+                  onChange={(e) => handleArrayChange(e, 'fields_of_interest')}
+                  className={inputClass}
+                />
+                <p className="mt-1 text-sm text-gray-500">Separate multiple fields with commas</p>
+              </div>
+              <div>
+                <Label htmlFor="skills" className={labelClass}>Skills</Label>
+                <input
+                  type="text"
+                  id="skills"
+                  name="skills"
+                  value={profile.skills.join(', ')}
+                  onChange={(e) => handleArrayChange(e, 'skills')}
+                  className={inputClass}
+                />
+                <p className="mt-1 text-sm text-gray-500">Separate multiple skills with commas</p>
+              </div>
             </div>
-          </div>
-        </div>
+          </motion.section>
 
-        <button
-          type="button"
-          onClick={handleSubmit}
-          className="mt-6 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Save Changes
-        </button>
-      </form>
+          <motion.section 
+            className="bg-white p-6 rounded-lg shadow-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">Mentorship Details</h2>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <Label htmlFor="reason_for_mentorship" className={labelClass}>Reason for Mentorship</Label>
+                <textarea
+                  id="reason_for_mentorship"
+                  name="reason_for_mentorship"
+                  value={profile.reason_for_mentorship}
+                  onChange={handleChange}
+                  rows="3"
+                  className={`${inputClass} h-24`}
+                ></textarea>
+              </div>
+              <div>
+                <Label htmlFor="specific_goals" className={labelClass}>Specific Goals</Label>
+                <textarea
+                  id="specific_goals"
+                  name="specific_goals"
+                  value={profile.specific_goals}
+                  onChange={handleChange}
+                  rows="3"
+                  className={`${inputClass} h-24`}
+                ></textarea>
+              </div>
+              <div>
+                <Label htmlFor="areas_of_guidance" className={labelClass}>Areas of Guidance</Label>
+                <input
+                  type="text"
+                  id="areas_of_guidance"
+                  name="areas_of_guidance"
+                  value={profile.areas_of_guidance.join(', ')}
+                  onChange={(e) => handleArrayChange(e, 'areas_of_guidance')}
+                  className={inputClass}
+                />
+                <p className="mt-1 text-sm text-gray-500">Separate multiple areas with commas</p>
+              </div>
+              <div>
+                <Label htmlFor="preferred_mentorship_style" className={labelClass}>Preferred Mentorship Style</Label>
+                <input
+                  type="text"
+                  id="preferred_mentorship_style"
+                  name="preferred_mentorship_style"
+                  value={profile.preferred_mentorship_style}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
+            </div>
+          </motion.section>
+
+          <motion.section 
+            className="bg-white p-6 rounded-lg shadow-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">Availability</h2>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <Label htmlFor="availability" className={labelClass}>Availability</Label>
+                <input
+                  type="text"
+                  id="availability"
+                  name="availability"
+                  value={profile.availability}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <Label htmlFor="preferred_meeting_times" className={labelClass}>Preferred Meeting Times</Label>
+                <input
+                  type="text"
+                  id="preferred_meeting_times"
+                  name="preferred_meeting_times"
+                  value={profile.preferred_meeting_times}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
+            </div>
+          </motion.section>
+
+          <motion.div 
+            className="flex justify-end"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <button
+              type="submit"
+              className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+            >
+              Save Changes
+            </button>
+          </motion.div>
+        </form>
+      </ScrollArea>
     </div>
   );
 }
+
