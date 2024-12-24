@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { FaStar, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { supabase } from '../../../../lib/supabase-client'; // Adjust the path if needed
+import { supabase } from '../../../../../lib/supabase-client'; // Adjust the path if needed
 
 const Explore = () => {
   const [mentors, setMentors] = useState([]);
