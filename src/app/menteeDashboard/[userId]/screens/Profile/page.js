@@ -5,7 +5,7 @@ import { useMenteeDashboard } from '../../MenteeDashboardContext';
 import { motion } from 'framer-motion';
 import { Label } from '@radix-ui/react-label';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
-import { supabase } from '../../../../lib/supabase-client';
+import { supabase } from '../../../../../lib/supabase-client';
 
 export default function Profile() {
   const { user, menteeDetails } = useMenteeDashboard();

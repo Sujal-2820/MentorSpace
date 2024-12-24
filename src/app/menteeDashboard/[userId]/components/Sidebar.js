@@ -6,23 +6,33 @@ import { usePathname } from 'next/navigation';
 import { FiMenu, FiHome, FiUser, FiUserPlus, FiCalendar, FiBarChart2, FiLifeBuoy, FiBriefcase } from 'react-icons/fi';
 import { SiCodementor } from "react-icons/si";
 import { TbTargetArrow } from "react-icons/tb";
+import { useMenteeDashboard } from '../MenteeDashboardContext';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { user } = useMenteeDashboard();
   const pathname = usePathname();
+
+
+  if (!user) {
+    return 
+  }
+
+  const userId = user.id;
+
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   // Navigation items
   const navItems = [
-    { id: 1, label: 'Home', icon: <FiHome />, link: '/menteeDashboard' },
-    { id: 2, label: 'Profile', icon: <FiUser />, link: '/menteeDashboard/screens/Profile' },
-    { id: 3, label: 'Find Mentors', icon: <SiCodementor />, link: '/menteeDashboard/screens/Explore' },
-    { id: 4, label: 'Requests', icon: <FiUserPlus />, link: '/menteeDashboard/screens/Requests' },
-    { id: 5, label: 'Sessions', icon: <FiCalendar />, link: '/menteeDashboard/screens/Sessions' },
-    { id: 6, label: 'Goals', icon: <TbTargetArrow />, link: '/menteeDashboard/screens/Goals' },
-    { id: 7, label: 'Resources', icon: <FiBarChart2 />, link: '/menteeDashboard/screens/Resources' },
-    { id: 8, label: 'Full Profile', icon: <FiUser />, link: '/menteeDashboard/screens/FullProfile?id=mentorId', hidden: true },
+    { id: 1, label: 'Home', icon: <FiHome />, link: `/menteeDashboard/${userId}/` },
+    { id: 2, label: 'Profile', icon: <FiUser />, link: `/menteeDashboard/${userId}/screens/Profile` },
+    { id: 3, label: 'Find Mentors', icon: <SiCodementor />, link: `/menteeDashboard/${userId}/screens/Explore` },
+    { id: 4, label: 'Requests', icon: <FiUserPlus />, link: `/menteeDashboard/${userId}/screens/Requests` },
+    { id: 5, label: 'Sessions', icon: <FiCalendar />, link: `/menteeDashboard/${userId}/screens/Sessions` },
+    { id: 6, label: 'Goals', icon: <TbTargetArrow />, link: `/menteeDashboard/${userId}/screens/Goals` },
+    { id: 7, label: 'Resources', icon: <FiBarChart2 />, link: `/menteeDashboard/${userId}/screens/Resources` },
+    { id: 8, label: 'Full Profile', icon: <FiUser />, link: `/menteeDashboard/${userId}/screens/FullProfile?id=mentorId`, hidden: true },
   ];
 
   return (

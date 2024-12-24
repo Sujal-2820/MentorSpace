@@ -1,13 +1,13 @@
-// src/app/signin/page.js
+//src/app/signin/page.js
 
 'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navbar from '../components/home/Navbar'
+import { supabase } from '../../lib/supabase-client'
 
 export default function SignIn() {
   const [email, setEmail] = useState('')
@@ -16,54 +16,64 @@ export default function SignIn() {
   const [errorMessage, setErrorMessage] = useState('')
   const router = useRouter()
 
-  // Fetch session using NextAuth's useSession hook
-  const { data: session, status } = useSession()
-
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
 
   const handleSignIn = async (e) => {
-    e.preventDefault()
-    setErrorMessage('') // Clear previous errors
-
+    e.preventDefault();
+    setErrorMessage(''); // Clear previous errors
+  
     if (!email || !password) {
-      setErrorMessage('Both email and password are required.')
-      return
+      setErrorMessage('Both email and password are required.');
+      return;
     }
-
+  
     try {
-      // Attempt to sign in with NextAuth
-      const res = await signIn('credentials', {
-        redirect: false,
+      // Attempt to sign in
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      })
-
-      if (res?.error) {
-        setErrorMessage(res.error)
+      });
+  
+      if (error) {
+        setErrorMessage(error.message);
+        return;
+      }
+  
+      // Retrieve the signed-in user's details
+      const user = data.user;
+      if (!user) {
+        setErrorMessage('Failed to retrieve user details.');
+        return;
+      }
+  
+      // Fetch the user's role from the database
+      const { data: roleData, error: roleError } = await supabase
+        .from('users') // Replace 'users' with your actual table name
+        .select('role')
+        .eq('id', user.id)
+        .single();
+  
+      if (roleError || !roleData) {
+        setErrorMessage('Failed to fetch user role. Please try again.');
+        return;
+      }
+  
+      const userRole = roleData.role;
+      const userId = user.id;
+  
+      // Redirect user based on their role
+      if (userRole === 'Mentor') {
+        router.push(`/mentorDashboard/${userId}`);
+      } else if (userRole === 'Mentee') {
+        router.push(`/menteeDashboard/${userId}`);
       } else {
-        // Successful login: session should have role
-        if (session?.user?.role === 'Mentor') {
-          router.push('/mentorDashboard')
-        } else if (session?.user?.role === 'Mentee') {
-          router.push('/menteeDashboard')
-        } else {
-          setErrorMessage('Invalid role. Please contact support.')
-        }
+        setErrorMessage('Invalid role. Please contact support.');
       }
     } catch (err) {
-      setErrorMessage('Something went wrong. Please try again.')
-      console.error(err)
+      setErrorMessage('Something went wrong. Please try again.');
+      console.error(err);
     }
-  }
-
-  // Handle redirection after session is established
-  if (status === 'authenticated') {
-    if (session.user.role === 'Mentor') {
-      router.push('/mentorDashboard')
-    } else if (session.user.role === 'Mentee') {
-      router.push('/menteeDashboard')
-    }
-  }
+  };
 
   
 
