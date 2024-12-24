@@ -22,7 +22,7 @@ const Sidebar = () => {
     { id: 5, label: 'Sessions', icon: <FiCalendar />, link: '/menteeDashboard/screens/Sessions' },
     { id: 6, label: 'Goals', icon: <TbTargetArrow />, link: '/menteeDashboard/screens/Goals' },
     { id: 7, label: 'Resources', icon: <FiBarChart2 />, link: '/menteeDashboard/screens/Resources' },
-    { id: 8, label: 'Full Profile', icon: <FiUser />, link: '/menteeDashboard/screens/FullProfile', hidden: true },
+    { id: 8, label: 'Full Profile', icon: <FiUser />, link: '/menteeDashboard/screens/FullProfile?id=mentorId', hidden: true },
   ];
 
   return (

@@ -1,3 +1,5 @@
+//src/app/signup/page.js
+
 'use client'
 
 import { useState } from 'react'
@@ -58,7 +60,6 @@ export default function SignUp() {
           created_at: new Date().toISOString(),
         },
       ]);
- 
   
       if (insertError) {
         throw insertError;
@@ -78,6 +79,7 @@ export default function SignUp() {
       setLoading(false);
     }
   };
+  
   
   
 
