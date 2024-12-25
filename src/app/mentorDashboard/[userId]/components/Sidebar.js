@@ -4,22 +4,32 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FiMenu, FiHome, FiUser, FiUserPlus, FiCalendar, FiFileText, FiBarChart2 } from 'react-icons/fi';
+import { SiCodementor } from "react-icons/si";
+import { TbTargetArrow } from "react-icons/tb";
+import { useMentorDashboard } from '../MentorDashboardContext';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { user } = useMentorDashboard();
   const pathname = usePathname();  // Hook to get the current pathname
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
+  if (!user) {
+    return 
+  }
+
+  const userId = user.id
+
   // Navigation items
   const navItems = [
-    { id: 1, label: 'Home', icon: <FiHome />, link: '/mentorDashboard' },
-    { id: 2, label: 'Profile', icon: <FiUser />, link: '/mentorDashboard/screens/Profile' },
-    { id: 3, label: 'Sessions', icon: <FiCalendar />, link: '/mentorDashboard/screens/Sessions' },
-    { id: 4, label: 'Requests', icon: <FiUserPlus />, link: '/mentorDashboard/screens/Requests' },
-    { id: 5, label: 'Resources', icon: <FiFileText />, link: '/mentorDashboard/screens/Resources' },
-    { id: 6, label: 'Analytics', icon: <FiBarChart2 />, link: '/mentorDashboard/screens/Analytics' },
-    { id: 7, label: 'Full Profile', icon: <FiUser />, link: '/mentorDashboard/screens/FullProfile', hidden: true },
+    { id: 1, label: 'Home', icon: <FiHome />, link: `/mentorDashboard/${userId}/` },
+    { id: 2, label: 'Profile', icon: <FiUser />, link: `/mentorDashboard/${userId}/screens/Profile` },
+    { id: 3, label: 'Sessions', icon: <FiCalendar />, link: `/mentorDashboard/${userId}/screens/Sessions` },
+    { id: 4, label: 'Requests', icon: <FiUserPlus />, link: `/mentorDashboard/${userId}/screens/Requests` },
+    { id: 5, label: 'Resources', icon: <FiFileText />, link: `/mentorDashboard/${userId}/screens/Resources` },
+    { id: 6, label: 'Analytics', icon: <FiBarChart2 />, link: `/mentorDashboard/${userId}/screens/Analytics` },
+    { id: 7, label: 'Full Profile', icon: <FiUser />, link: `/mentorDashboard/${userId}/screens/FullProfile`, hidden: true },
   ];
 
   return (

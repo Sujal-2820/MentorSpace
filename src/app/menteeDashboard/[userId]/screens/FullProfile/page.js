@@ -3,21 +3,35 @@
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { FaStar, FaLinkedin, FaTwitter } from 'react-icons/fa'
-// import { supabase } from '../../../../lib/supabase-client' // Import your Supabase client
+import { supabase } from '../../../../../lib/supabase-client' // Import your Supabase client
 
 export default function FullProfile() {
   const searchParams = useSearchParams();
   const mentorId = searchParams.get('id');
-
-  console.log('FullProfile component is rendering');
-  console.log('Search Params:', searchParams?.toString());
-  console.log('Mentor ID:', mentorId);
-
-  // const [profileData, setProfileData] = useState(null)
+  const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
-    console.log('useEffect triggered with mentorId:', mentorId);
-  }, [mentorId]);
+    if (mentorId) {
+      // Fetch the mentor details using Supabase
+      const fetchMentorDetails = async () => {
+        const { data, error } = await supabase
+          .from('mentors') // Replace with your actual table name
+          .select('*')
+          .eq('id', mentorId)
+          .single() // Get the single mentor data
+
+        if (error) {
+          console.error('Error fetching mentor data:', error)
+        } else {
+          setProfileData(data)
+        }
+      }
+
+      fetchMentorDetails()
+    }
+  }, [mentorId])
+
+  
 
   if (!profileData) {
     return (

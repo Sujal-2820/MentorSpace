@@ -1,16 +1,21 @@
-'use client'
+//src\app\menteeDashboard\[userId]\screens\Explore\page.js
+
+'use client';
 
 import { useState, useEffect } from "react";
 import { FaStar, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { supabase } from '../../../../../lib/supabase-client'; // Adjust the path if needed
+import { useMenteeDashboard } from '../../MenteeDashboardContext';
 
 const Explore = () => {
+  const { user } = useMenteeDashboard();
   const [mentors, setMentors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterExpertise, setFilterExpertise] = useState("");
   const [filterAvailability, setFilterAvailability] = useState("");
   const [sortBy, setSortBy] = useState("rating");
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -31,8 +36,37 @@ const Explore = () => {
     fetchMentors();
   }, []);
 
+  if (!user) {
+    return null;
+  }
+
+  const userId = user.id;
+
   const handleViewProfile = (mentorId) => {
-    router.push(`/mentorDashboard/screens/FullProfile?id=${mentorId}`);
+    router.push(`/menteeDashboard/${userId}/screens/FullProfile?id=${mentorId}`);
+  };
+
+  const handleRequestMentorship = async (mentorId) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('connection_requests')
+        .insert([
+          { mentor_id: mentorId, mentee_id: userId, status: 'Pending' }
+        ]);
+
+      if (error) {
+        console.error('Error sending mentorship request:', error);
+        alert('Failed to send mentorship request. Please try again.');
+      } else {
+        alert('Mentorship request sent successfully!');
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const filteredMentors = mentors
@@ -142,8 +176,12 @@ const Explore = () => {
                 >
                   View Profile
                 </button>
-                <button className="text-primary hover:underline">
-                  Request Mentorship
+                <button
+                  onClick={() => handleRequestMentorship(mentor.id)}
+                  className="text-primary hover:underline"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Requesting..." : "Request Mentorship"}
                 </button>
               </div>
             </div>

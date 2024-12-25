@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { FaLinkedin, FaTwitter, FaLink } from 'react-icons/fa';
 import { Label } from '@radix-ui/react-label';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
-import { supabase } from '../../../../lib/supabase-client';
+import { supabase } from '../../../../../lib/supabase-client';
 
 
 export default function Profile() {
