@@ -9,50 +9,82 @@ import { supabase } from '../../../../../lib/supabase-client'; // Adjust the pat
 import { useMenteeDashboard } from '../../MenteeDashboardContext';
 
 const Explore = () => {
-  const { user } = useMenteeDashboard();
+  const { user, menteeDetails } = useMenteeDashboard();
   const [mentors, setMentors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterExpertise, setFilterExpertise] = useState("");
   const [filterAvailability, setFilterAvailability] = useState("");
   const [sortBy, setSortBy] = useState("rating");
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMentors, setLoadingMentors] = useState({}); // Tracks loading state for each mentor
 
   const router = useRouter();
 
-  // Fetch mentor data from Supabase
+  console.log("menteeDetails in explore page: ", menteeDetails);
+
+  // Fetch mentor data from Supabase and filter out already requested mentors
   useEffect(() => {
     const fetchMentors = async () => {
-      const { data, error } = await supabase
-        .from('mentors') // Replace with your actual table name
-        .select('*');
+      try {
+        // Fetch all mentors
+        const { data: mentorsData, error: mentorsError } = await supabase
+          .from('mentors') // Replace with your actual table name
+          .select('*');
 
-      if (error) {
-        console.error('Error fetching mentors:', error);
-      } else {
-        setMentors(data);
+        if (mentorsError) {
+          console.error('Error fetching mentors:', mentorsError);
+          return;
+        }
+
+        // Fetch connection requests for the logged-in mentee
+        const { data: connectionRequests, error: connectionRequestsError } = await supabase
+          .from('connection_requests')
+          .select('mentor_id')
+          .eq('mentee_id', menteeDetails.id);
+
+        if (connectionRequestsError) {
+          console.error('Error fetching connection requests:', connectionRequestsError);
+          return;
+        }
+
+        // Extract mentor IDs from the connection requests
+        const requestedMentorIds = connectionRequests.map(request => request.mentor_id);
+
+        // Filter out mentors that are already requested
+        const availableMentors = mentorsData.filter(mentor => !requestedMentorIds.includes(mentor.id));
+
+        setMentors(availableMentors);
+      } catch (error) {
+        console.error('Unexpected error while fetching mentors:', error);
       }
     };
 
-    fetchMentors();
-  }, []);
+    if (menteeDetails) {
+      fetchMentors();
+    }
+  }, [menteeDetails]); // Rerun whenever menteeDetails changes
 
   if (!user) {
     return null;
   }
 
+  if (!menteeDetails) {
+    return <p>Loading mentee details...</p>; // Display a loading message or spinner
+  }
+
   const userId = user.id;
+  const menteeId = menteeDetails.id;
 
   const handleViewProfile = (mentorId) => {
     router.push(`/menteeDashboard/${userId}/screens/FullProfile?id=${mentorId}`);
   };
 
   const handleRequestMentorship = async (mentorId) => {
-    setIsLoading(true);
+    setLoadingMentors(prev => ({ ...prev, [mentorId]: true })); // Set loading for the specific mentor
     try {
       const { data, error } = await supabase
         .from('connection_requests')
         .insert([
-          { mentor_id: mentorId, mentee_id: userId, status: 'Pending' }
+          { mentor_id: mentorId, mentee_id: menteeId, status: 'Pending' }
         ]);
 
       if (error) {
@@ -60,12 +92,24 @@ const Explore = () => {
         alert('Failed to send mentorship request. Please try again.');
       } else {
         alert('Mentorship request sent successfully!');
+        // Refresh mentor list after successful request
+        const fetchMentors = async () => {
+          const { data: connectionRequests, error } = await supabase
+            .from('connection_requests')
+            .select('mentor_id')
+            .eq('mentee_id', menteeId);
+
+          const requestedMentorIds = connectionRequests.map(req => req.mentor_id);
+
+          setMentors(prevMentors => prevMentors.filter(mentor => !requestedMentorIds.includes(mentor.id)));
+        };
+        fetchMentors();
       }
     } catch (error) {
       console.error('Unexpected error:', error);
       alert('Something went wrong. Please try again.');
     } finally {
-      setIsLoading(false);
+      setLoadingMentors(prev => ({ ...prev, [mentorId]: false })); // Reset loading for the specific mentor
     }
   };
 
@@ -97,14 +141,13 @@ const Explore = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          
+
           <select
             className="p-2 border border-gray-300 rounded"
             value={filterExpertise}
             onChange={(e) => setFilterExpertise(e.target.value)}
           >
             <option value="">Filter by Expertise</option>
-            {/* Populate with expertise options */}
           </select>
 
           <select
@@ -179,9 +222,9 @@ const Explore = () => {
                 <button
                   onClick={() => handleRequestMentorship(mentor.id)}
                   className="text-primary hover:underline"
-                  disabled={isLoading}
+                  disabled={loadingMentors[mentor.id] || false}
                 >
-                  {isLoading ? "Requesting..." : "Request Mentorship"}
+                  {loadingMentors[mentor.id] ? "Requesting..." : "Request Mentorship"}
                 </button>
               </div>
             </div>
@@ -193,3 +236,4 @@ const Explore = () => {
 };
 
 export default Explore;
+

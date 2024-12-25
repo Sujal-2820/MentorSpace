@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { WithContext as ReactTags } from 'react-tag-input'
 import PhoneInput from 'react-phone-input-2'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
@@ -20,6 +20,7 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter]
 export default function MentorOnboarding() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0)
+  const [userId, setUserId] = useState(null);
   const [formData, setFormData] = useState({
     qualifications: [],
     skills: [],
@@ -30,6 +31,17 @@ export default function MentorOnboarding() {
   const [loading, setLoading] = useState(false)  // Add loading state for submission
   const [imageError, setImageError] = useState('');
   const questionRef = useRef(null)
+
+  useEffect(() => {
+    // Extract userId from the query parameters
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('userId');
+    setUserId(id);
+  }, []);
+
+  if (!userId) {
+    return <p>Loading...</p>; // Show loading message while retrieving userId
+  }
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
@@ -195,7 +207,7 @@ export default function MentorOnboarding() {
       }
   
       alert('Your details have been successfully saved!');
-      router.push('/mentorDashboard');
+      router.push(`/mentorDashboard/${userId}`);
   
     } catch (err) {
       console.error('Unexpected error:', err);

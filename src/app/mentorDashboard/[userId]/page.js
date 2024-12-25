@@ -57,9 +57,9 @@ const DashboardPage = () => {
         {isPopupOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center" onClick={handleClosePopup}>
             <img
-              src={menteeDetails.profile_image_url}
+              src={mentorDetails.profile_image_url}
               alt="Full Mentee"
-              className="max-w-full max-h-full"
+              className="max-w-[80%] max-h-[80%] object-contain"
             />
           </div>
         )}

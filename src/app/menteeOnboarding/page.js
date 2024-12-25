@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { WithContext as ReactTags } from 'react-tag-input'
 import PhoneInput from 'react-phone-input-2'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
@@ -21,12 +21,26 @@ export default function MenteeOnboarding() {
   const router = useRouter();
   const [imageError, setImageError] = useState('');
   const [currentStep, setCurrentStep] = useState(0)
+  const [userId, setUserId] = useState(null);
+
   const [formData, setFormData] = useState({
     skills: [],
     profileImage: null,
   })
   const [loading, setLoading] = useState(false)
   const questionRef = useRef(null)
+
+  useEffect(() => {
+    // Extract userId from the query parameters
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('userId');
+    setUserId(id);
+  }, []);
+
+  if (!userId) {
+    return <p>Loading...</p>; // Show loading message while retrieving userId
+  }
+
 
   const handleInputChange = (e) => {
       const { name, value, files } = e.target;
@@ -184,7 +198,7 @@ export default function MenteeOnboarding() {
       }
 
       alert('Your details have been successfully saved!')
-      router.push('/menteeDashboard');
+      router.push(`/menteeDashboard/${userId}`);
     } catch (err) {
       console.error('Unexpected error:', err)
       alert('An unexpected error occurred. Please try again.')

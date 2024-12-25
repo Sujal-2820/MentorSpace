@@ -69,9 +69,9 @@ export default function SignUp() {
   
       // Redirect based on role
       if (role === 'Mentor') {
-        router.push('/mentorOnboarding'); // Redirect to mentor onboarding
+        router.push(`/mentorOnboarding?userId=${userId}`); // Redirect to mentor onboarding
       } else if (role === 'Mentee') {
-        router.push('/menteeOnboarding'); // Redirect to mentee onboarding
+        router.push(`/menteeOnboarding?userId=${userId}`); // Redirect to mentee onboarding
       }
     } catch (err) {
       setError(err.message || 'An error occurred during signup.');

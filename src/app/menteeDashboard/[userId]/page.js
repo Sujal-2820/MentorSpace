@@ -56,7 +56,7 @@ const DashboardPage = () => {
             <img
               src={menteeDetails.profile_image_url}
               alt="Full Mentee"
-              className="max-w-full max-h-full"
+              className="max-w-[80%] max-h-[80%] object-contain"
             />
           </div>
         )}

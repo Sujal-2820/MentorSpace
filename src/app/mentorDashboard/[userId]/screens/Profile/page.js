@@ -242,17 +242,6 @@ export default function Profile() {
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="availability" className={labelClass}>Availability (hours per week)</Label>
-                  <input
-                    type="number"
-                    id="availability"
-                    name="availability"
-                    value={profile.availability}
-                    onChange={handleChange}
-                    className={inputClass}
-                  />
-                </div>
-                <div>
                   <Label htmlFor="meeting_format" className={labelClass}>Meeting Format</Label>
                   <select
                     id="meeting_format"
