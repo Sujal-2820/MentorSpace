@@ -1,50 +1,100 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../../../../lib/supabase-client'; // Adjust the path based on your file structure
+import { useMenteeDashboard } from '../../MenteeDashboardContext';
 
 const Resources = () => {
-  // Dummy data for mentors
-  const connectedMentors = [
-    { id: 1, name: 'John Doe', expertise: 'Web Development' },
-    { id: 2, name: 'Jane Smith', expertise: 'Data Science' },
-    { id: 3, name: 'Michael Johnson', expertise: 'UI/UX Design' },
-  ];
-
-  const [resources, setResources] = useState([
-    {
-      id: 1,
-      title: 'React Basics Guide',
-      type: 'PDF',
-      url: '/resources/react-basics.pdf',
-    },
-    {
-      id: 2,
-      title: 'JavaScript Crash Course',
-      type: 'Video',
-      url: 'https://www.youtube.com/watch?v=upDLs1sn7g4',
-    },
-  ]);
-
+  const [resources, setResources] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [connectedMentors, setConnectedMentors] = useState([]);
   const [selectedMentor, setSelectedMentor] = useState('');
   const [newRequest, setNewRequest] = useState('');
+  const { menteeDetails } = useMenteeDashboard(); // Assuming menteeDetails includes mentee_id
+  const menteeId = menteeDetails?.id;
 
-  const handleRequestResource = (e) => {
+  // Fetch connected mentors
+  useEffect(() => {
+    const fetchConnectedMentors = async () => {
+      if (!menteeId) return;
+  
+      const { data: connectionData, error: connectionError } = await supabase
+        .from('connection_requests')
+        .select('mentor_id, mentors(full_name, id), status')
+        .eq('mentee_id', menteeId)
+        .eq('status', 'Accepted'); // Only consider mentors with "Accepted" status
+  
+      if (connectionError) {
+        console.error('Error fetching connected mentors:', connectionError);
+        return;
+      }
+  
+      const mentors = connectionData.map((connection) => ({
+        id: connection.mentors.id,
+        name: connection.mentors.full_name,
+      }));
+  
+      setConnectedMentors(mentors);
+    };
+  
+    fetchConnectedMentors();
+  }, [menteeId]);
+  
+
+  // Fetch resource requests
+  useEffect(() => {
+    const fetchResourceRequests = async () => {
+      if (!menteeId) return;
+
+      const { data: resourceRequests, error: resourceError } = await supabase
+        .from('resource_requests')
+        .select('*')
+        .eq('mentee_id', menteeId);
+
+      if (resourceError) {
+        console.error('Error fetching resource requests:', resourceError);
+        return;
+      }
+
+      setRequests(resourceRequests);
+    };
+
+    fetchResourceRequests();
+  }, [menteeId]);
+
+  // Handle sending resource request
+  const handleRequestResource = async (e) => {
     e.preventDefault();
 
-    if (selectedMentor && newRequest) {
-      const mentor = connectedMentors.find((mentor) => mentor.id === parseInt(selectedMentor));
+    if (!selectedMentor || !newRequest) {
+      alert('Please select a mentor and describe your request.');
+      return;
+    }
+
+    const mentor = connectedMentors.find((mentor) => mentor.id === selectedMentor);
+
+    const { error } = await supabase.from('resource_requests').insert({
+      mentee_id: menteeId,
+      mentor_id: selectedMentor,
+      resource_details: newRequest,
+      status: 'Pending',
+    });
+
+    if (error) {
+      console.error('Error sending resource request:', error);
+      alert('Failed to send resource request.');
+    } else {
+      alert('Resource request sent successfully.');
       setRequests([
         ...requests,
         {
           id: Date.now(),
           mentor: mentor.name,
-          mentorExpertise: mentor.expertise,
-          resourceTitle: newRequest,
+          resource_details: newRequest,
+          status: 'Pending',
         },
       ]);
 
-      // Reset form
       setSelectedMentor('');
       setNewRequest('');
     }
@@ -57,15 +107,12 @@ const Resources = () => {
         Access resources shared by mentors or the platform. Request additional resources from connected mentors if needed.
       </p>
 
-      {/* Resources List */}
+      {/* Available Resources */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Available Resources</h2>
         <div className="space-y-4">
           {resources.map((resource) => (
-            <div
-              key={resource.id}
-              className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
-            >
+            <div key={resource.id} className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-semibold">{resource.title}</h3>
                 <p className="text-sm text-gray-600">{resource.type}</p>
@@ -88,9 +135,7 @@ const Resources = () => {
         <h2 className="text-xl font-semibold mb-4">Request Resources</h2>
         <form onSubmit={handleRequestResource} className="bg-white p-4 rounded-lg shadow-md">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Select Mentor
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Select Mentor</label>
             <select
               value={selectedMentor}
               onChange={(e) => setSelectedMentor(e.target.value)}
@@ -102,15 +147,13 @@ const Resources = () => {
               </option>
               {connectedMentors.map((mentor) => (
                 <option key={mentor.id} value={mentor.id}>
-                  {mentor.name} ({mentor.expertise})
+                  {mentor.name}
                 </option>
               ))}
             </select>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Resource Request
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Resource Request</label>
             <input
               type="text"
               value={newRequest}
@@ -120,10 +163,7 @@ const Resources = () => {
               required
             />
           </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-          >
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
             Send Request
           </button>
         </form>
@@ -135,14 +175,11 @@ const Resources = () => {
         <div className="space-y-4">
           {requests.length > 0 ? (
             requests.map((request) => (
-              <div
-                key={request.id}
-                className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
-              >
+              <div key={request.id} className="bg-white p-4 rounded-lg shadow-md">
                 <div>
-                  <h3 className="text-lg font-semibold">{request.resourceTitle}</h3>
+                  <h3 className="text-lg font-semibold">{request.resource_details}</h3>
                   <p className="text-sm text-gray-600">
-                    Requested from {request.mentor} ({request.mentorExpertise})
+                    Requested from {request.mentor} - Status: {request.status}
                   </p>
                 </div>
               </div>
