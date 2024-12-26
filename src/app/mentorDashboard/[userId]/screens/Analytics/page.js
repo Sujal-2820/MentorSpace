@@ -1,11 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { motion } from 'framer-motion';
+import { supabase } from '../../../../../lib/supabase-client'; // Import supabase client
+import { useMentorDashboard } from '../../MentorDashboardContext';
 
 export default function Analytics() {
-  // Dummy data for analytics
+  const [feedback, setFeedback] = useState([]);
+  const [mentees, setMentees] = useState([]);
+  const { mentorDetails } = useMentorDashboard(); // Assuming mentorDetails includes mentor_id
+  const mentorId = mentorDetails?.id; // Replace with logic to get mentorId
+
   const sessionData = [
     { month: 'Jan', sessions: 12 },
     { month: 'Feb', sessions: 15 },
@@ -27,11 +33,46 @@ export default function Analytics() {
     completionRate: '92%',
   };
 
-  const feedback = [
-    { mentee: 'Alice Johnson', comment: 'Great mentor, learned a lot!', rating: 5 },
-    { mentee: 'Bob Smith', comment: 'Helpful and engaging sessions.', rating: 4 },
-    { mentee: 'Charlie Brown', comment: 'Explains concepts well.', rating: 5 },
-  ];
+  // Fetch feedback and mentee data from Supabase
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      // Get feedback from Supabase where mentor_id matches the current mentor's id
+      const { data: feedbackData, error: feedbackError } = await supabase
+        .from('feedback')
+        .select('rating, feedback_text, mentee_id')
+        .eq('mentor_id', mentorId);
+
+      if (feedbackError) {
+        console.error('Error fetching feedback:', feedbackError);
+        return;
+      }
+
+      // Get mentee data to map names
+      const menteeIds = feedbackData.map((item) => item.mentee_id);
+      const { data: menteeData, error: menteeError } = await supabase
+        .from('mentees')
+        .select('id, full_name')
+        .in('id', menteeIds);
+
+      if (menteeError) {
+        console.error('Error fetching mentees:', menteeError);
+        return;
+      }
+
+      // Map feedback with mentee names
+      const feedbackWithMenteeNames = feedbackData.map((item) => {
+        const mentee = menteeData.find((m) => m.id === item.mentee_id);
+        return {
+          ...item,
+          mentee: mentee ? mentee.full_name : 'Unknown Mentee',
+        };
+      });
+
+      setFeedback(feedbackWithMenteeNames);
+    };
+
+    fetchFeedback();
+  }, [mentorId]); // Run the effect when mentorId changes
 
   return (
     <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 p-4 py-6 bg-gray-100 min-h-screen">
@@ -98,7 +139,7 @@ export default function Analytics() {
               >
                 <div>
                   <p className="font-medium">{item.mentee}</p>
-                  <p className="text-gray-600">{item.comment}</p>
+                  <p className="text-gray-600">{item.feedback_text}</p>
                 </div>
                 <p className="font-bold text-yellow-500">{'★'.repeat(item.rating)}</p>
               </div>

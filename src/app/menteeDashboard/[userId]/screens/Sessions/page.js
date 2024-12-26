@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format, isSameDay, parseISO } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
@@ -8,75 +8,123 @@ import { Dialog } from '@radix-ui/react-dialog';
 import { FiVideo, FiCheckCircle, FiFilter } from 'react-icons/fi';
 import { AiOutlineCalendar } from 'react-icons/ai';
 import { BiMessageDetail } from 'react-icons/bi';
+import { supabase } from '../../../../../lib/supabase-client';
+import { useMenteeDashboard } from '../../MenteeDashboardContext';
 
 const Sessions = () => {
-  const [sessions, setSessions] = useState([
-    {
-      id: 1,
-      mentorName: 'John Doe',
-      date: '2024-12-25',
-      time: '10:00 AM',
-      topic: 'React Performance Optimization',
-      link: 'https://zoom.us/j/123456789',
-      status: 'Upcoming',
-    },
-    {
-      id: 2,
-      mentorName: 'Jane Smith',
-      date: '2024-12-20',
-      time: '2:00 PM',
-      topic: 'Data Visualization Techniques',
-      link: 'https://meet.google.com/xyz-abc-pqr',
-      status: 'Completed',
-    },
-  ]);
+  const { menteeDetails } = useMenteeDashboard(); // Assuming menteeDetails contains mentee ID
+  const menteeId = menteeDetails?.id;
+
+  const [sessions, setSessions] = useState([]);
+  const [mentors, setMentors] = useState({}); // Store mentor names here
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [feedbackSession, setFeedbackSession] = useState(null);
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackStars, setFeedbackStars] = useState(0);
 
-  const filteredSessions = sessions.filter(
-    (session) =>
-      selectedStatus === 'All' || session.status === selectedStatus
-  );
+  useEffect(() => {
+    if (menteeId) {
+      fetchSessions();
+    }
+  }, [menteeId]);
 
-  const scrollToSession = (date) => {
-    const sessionElement = document.getElementById(`session-${date}`);
-    sessionElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const fetchSessions = async () => {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select('*')
+      .eq('mentee_id', menteeId);
+
+    if (error) {
+      console.error('Error fetching sessions:', error);
+    } else {
+      setSessions(data);
+      fetchMentors(data); // Fetch mentors after sessions are fetched
+    }
   };
 
-  const markAsCompleted = (id) => {
-    setSessions((prevSessions) =>
-      prevSessions.map((session) =>
-        session.id === id ? { ...session, status: 'Completed' } : session
-      )
-    );
+  const fetchMentors = async (sessions) => {
+    const mentorIds = [...new Set(sessions.map(session => session.mentor_id))]; // Get unique mentor IDs
+    const { data, error } = await supabase
+      .from('mentors')
+      .select('id, full_name')
+      .in('id', mentorIds);
+
+    if (error) {
+      console.error('Error fetching mentors:', error);
+    } else {
+      const mentorMap = data.reduce((acc, mentor) => {
+        acc[mentor.id] = mentor.full_name; // Map mentor ID to full name
+        return acc;
+      }, {});
+      setMentors(mentorMap); // Store the mentor names in state
+    }
   };
 
-  const handleFeedbackSubmit = () => {
+  const markAsCompleted = async (id) => {
+    const { error } = await supabase
+      .from('appointments')
+      .update({ status: 'Completed' })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating session status:', error);
+    } else {
+      setSessions((prevSessions) =>
+        prevSessions.map((session) =>
+          session.id === id ? { ...session, status: 'Completed' } : session
+        )
+      );
+    }
+  };
+
+  const handleFeedbackSubmit = async () => {
     if (feedbackStars === 0 || feedbackText.trim() === '') {
       alert('Please provide a rating and feedback.');
       return;
     }
   
-    // Submit feedback (e.g., API call)
-    console.log('Submitting feedback:', {
-      session: feedbackSession,
-      stars: feedbackStars,
-      text: feedbackText,
-    });
+    try {
+      const { error } = await supabase.from('feedback').insert({
+        mentor_id: feedbackSession?.mentor_id,
+        mentee_id: menteeId,
+        rating: feedbackStars,
+        feedback_text: feedbackText,
+      });
   
-    // Reset state after submission
-    handleFeedbackCancel();
+      if (error) {
+        console.error('Error submitting feedback:', error);
+        alert('Failed to submit feedback. Please try again.');
+      } else {
+        alert('Feedback submitted successfully!');
+        setSessions((prevSessions) =>
+          prevSessions.map((session) =>
+            session.id === feedbackSession.id ? { ...session, feedbackGiven: true } : session
+          )
+        );
+        handleFeedbackCancel();
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      alert('An unexpected error occurred. Please try again.');
+    }
   };
   
-
   const handleFeedbackCancel = () => {
     setFeedbackSession(null);
     setFeedbackStars(0);
     setFeedbackText('');
   };
+
+  const filteredSessions = sessions.filter((session) => {
+    const matchesStatus = selectedStatus === 'All' || session.status === selectedStatus;
+    const matchesDate =
+      !selectedDate || isSameDay(parseISO(session.appointment_date), selectedDate);
+    return matchesStatus && matchesDate;
+  });
+
   
+  const sessionDates = sessions.map((session) => parseISO(session.appointment_date));
 
   return (
     <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 py-6">
@@ -90,14 +138,13 @@ const Sessions = () => {
           <h2 className="text-lg font-semibold mb-2">Calendar View</h2>
           <DayPicker
             mode="single"
-            onDayClick={(day) => {
-              const dateString = format(day, 'yyyy-MM-dd');
-              scrollToSession(dateString);
-            }}
+            selected={selectedDate}
+            onDayClick={(day) => setSelectedDate(day)}
             modifiers={{
-              highlighted: sessions.map((session) =>
-                parseISO(session.date)
-              ),
+              highlighted: (date) => sessionDates.some((sessionDate) => isSameDay(sessionDate, date)),
+            }}
+            modifiersStyles={{
+              highlighted: { backgroundColor: '#FFD700', color: 'black' },
             }}
           />
         </div>
@@ -122,28 +169,24 @@ const Sessions = () => {
             {filteredSessions.map((session) => (
               <div
                 key={session.id}
-                id={`session-${session.date}`}
+                id={`session-${session.appointment_date}`}
                 className={`p-4 rounded-lg shadow-md ${
-                  session.status === 'Upcoming'
-                    ? 'bg-blue-100'
-                    : 'bg-gray-100'
+                  session.status === 'Upcoming' ? 'bg-blue-100' : 'bg-gray-100'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">{session.topic}</h3>
                     <p className="text-sm text-gray-700">
-                      Mentor: <span className="font-medium">{session.mentorName}</span>
+                      Mentor: <span className="font-medium">{mentors[session.mentor_id] || 'Loading...'}</span>
                     </p>
                     <p className="text-sm text-gray-500">
                       <AiOutlineCalendar className="inline-block mr-1" />
-                      {format(new Date(session.date), 'PP')} at {session.time}
+                      {format(parseISO(session.appointment_date), 'PP')} at {session.time}
                     </p>
                     <p
                       className={`text-sm font-semibold ${
-                        session.status === 'Upcoming'
-                          ? 'text-blue-700'
-                          : 'text-gray-700'
+                        session.status === 'Upcoming' ? 'text-blue-700' : 'text-gray-700'
                       }`}
                     >
                       Status: {session.status}
@@ -153,7 +196,7 @@ const Sessions = () => {
                     {session.status === 'Upcoming' && (
                       <>
                         <a
-                          href={session.link}
+                          href={session.meeting_link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
@@ -188,58 +231,54 @@ const Sessions = () => {
       </div>
 
       {/* Feedback Modal */}
-        {feedbackSession && (
-        <Dialog
-            open={!!feedbackSession}
-            onOpenChange={handleFeedbackCancel}
-        >
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      {feedbackSession && (
+        <Dialog open={!!feedbackSession} onOpenChange={handleFeedbackCancel}>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white rounded-lg p-6 w-1/3">
-                <h2 className="text-lg font-semibold mb-4">
-                Feedback for {feedbackSession?.mentorName}
-                </h2>
-                <div className="mb-4">
+              <h2 className="text-lg font-semibold mb-4">
+                Feedback for Mentor {mentors[feedbackSession?.mentor_id] || 'Loading...'}
+              </h2>
+              <div className="mb-4">
                 <label className="block mb-2 font-medium">Rating (out of 5):</label>
                 <div className="flex space-x-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
+                  {[1, 2, 3, 4, 5].map((star) => (
                     <button
-                        key={star}
-                        className={`w-8 h-8 rounded-full ${
+                      key={star}
+                      className={`w-8 h-8 rounded-full ${
                         feedbackStars >= star ? 'bg-yellow-500' : 'bg-gray-300'
-                        }`}
-                        onClick={() => setFeedbackStars(star)}
+                      }`}
+                      onClick={() => setFeedbackStars(star)}
                     >
-                        {star}
+                      {star}
                     </button>
-                    ))}
+                  ))}
                 </div>
-                </div>
-                <textarea
+              </div>
+              <textarea
                 rows={5}
                 className="w-full border rounded p-2"
                 placeholder="Write your feedback..."
                 value={feedbackText}
                 onChange={(e) => setFeedbackText(e.target.value)}
-                ></textarea>
-                <div className="flex justify-end mt-4">
+              ></textarea>
+              <div className="flex justify-end mt-4">
                 <button
-                    className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
-                    onClick={handleFeedbackCancel}
+                  className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                  onClick={handleFeedbackCancel}
                 >
-                    Cancel
+                  Cancel
                 </button>
                 <button
-                    className="bg-green-500 text-white px-4 py-2 rounded"
-                    onClick={handleFeedbackSubmit}
+                  className="bg-green-500 text-white px-4 py-2 rounded"
+                  onClick={handleFeedbackSubmit}
                 >
-                    Submit
+                  Submit
                 </button>
-                </div>
+              </div>
             </div>
-            </div>
+          </div>
         </Dialog>
-        )}
-
+      )}
     </div>
   );
 };
