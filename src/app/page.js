@@ -222,7 +222,7 @@ function FAQItem({ question, answer }) {
     <motion.div
       initial={false}
       animate={{ backgroundColor: isOpen ? "rgba(229, 231, 235, 0.5)" : "transparent" }}
-      className="border-b border-gray-200 pb-6"
+      className="border-b border-gray-200 pb-6 p-4"
     >
       <dt className="text-lg">
         <button
