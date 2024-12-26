@@ -5,7 +5,7 @@ import { supabase } from '../../../../../lib/supabase-client'; // Adjust the pat
 import { useMenteeDashboard } from '../../MenteeDashboardContext';
 
 const Requests = () => {
-  const { menteeDetails } = useMenteeDashboard();
+  const { user, menteeDetails } = useMenteeDashboard();
   const [requests, setRequests] = useState([]);
 
   // Fetch the mentee's requests from Supabase
@@ -38,7 +38,7 @@ const Requests = () => {
             }
 
             // Add the full_name of the mentor to the request
-            return { ...request, mentorName: mentorData.full_name };
+            return { ...request, mentorName: mentorData.full_name, mentorId: request.mentor_id };
           })
         );
 
@@ -83,6 +83,12 @@ const Requests = () => {
       console.error('Unexpected error while cancelling request:', error);
     }
   };
+
+  if (!user) {
+    return null;
+  }
+
+  const userId = user.id;
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -137,6 +143,12 @@ const Requests = () => {
                   Cancel Request
                 </button>
               )}
+              <a
+                href={`/menteeDashboard/${userId}/screens/FullProfile?id=${request.mentorId}`} // Assuming the mentor's profile is at /mentor-profile/{mentorId}
+                className="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                View Profile
+              </a>
             </div>
           ))
         ) : (

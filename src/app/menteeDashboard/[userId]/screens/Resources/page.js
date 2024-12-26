@@ -17,29 +17,49 @@ const Resources = () => {
   useEffect(() => {
     const fetchConnectedMentors = async () => {
       if (!menteeId) return;
-  
+
       const { data: connectionData, error: connectionError } = await supabase
         .from('connection_requests')
         .select('mentor_id, mentors(full_name, id), status')
         .eq('mentee_id', menteeId)
         .eq('status', 'Accepted'); // Only consider mentors with "Accepted" status
-  
+
       if (connectionError) {
         console.error('Error fetching connected mentors:', connectionError);
         return;
       }
-  
+
       const mentors = connectionData.map((connection) => ({
         id: connection.mentors.id,
         name: connection.mentors.full_name,
       }));
-  
+
       setConnectedMentors(mentors);
     };
-  
+
     fetchConnectedMentors();
   }, [menteeId]);
-  
+
+  // Fetch shared resources
+  useEffect(() => {
+    const fetchResources = async () => {
+      if (!menteeId) return;
+
+      const { data: resourceData, error: resourceError } = await supabase
+        .from('resources')
+        .select('*')
+        .in('mentor_id', connectedMentors.map((mentor) => mentor.id)); // Match mentor_id to connected mentors
+
+      if (resourceError) {
+        console.error('Error fetching shared resources:', resourceError);
+        return;
+      }
+
+      setResources(resourceData);
+    };
+
+    fetchResources();
+  }, [connectedMentors, menteeId]);
 
   // Fetch resource requests
   useEffect(() => {
@@ -111,22 +131,26 @@ const Resources = () => {
       <div>
         <h2 className="text-xl font-semibold mb-4">Available Resources</h2>
         <div className="space-y-4">
-          {resources.map((resource) => (
-            <div key={resource.id} className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
-              <div>
-                <h3 className="text-lg font-semibold">{resource.title}</h3>
-                <p className="text-sm text-gray-600">{resource.type}</p>
+          {resources.length > 0 ? (
+            resources.map((resource) => (
+              <div key={resource.id} className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-semibold">{resource.title}</h3>
+                  <p className="text-sm text-gray-600">{resource.type}</p>
+                </div>
+                <a
+                  href={resource.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                >
+                  View / Download
+                </a>
               </div>
-              <a
-                href={resource.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-              >
-                View / Download
-              </a>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-gray-600">No resources available from your mentors.</p>
+          )}
         </div>
       </div>
 
