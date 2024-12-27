@@ -52,7 +52,7 @@ With strong communication, teamwork, and management skills, Sujal excels in coll
 <br/>
 
 ### Onboarding
-<img src="Screenshots/mentorOnboarding.png" alt="Onboarding Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/onboarding.png" alt="Onboarding Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 <br/>
 
