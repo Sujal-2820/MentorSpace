@@ -1,9 +1,17 @@
-'use client'
+'use client';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function Navbar() {
+export default function Navbar({ role, userId, onScrollToFeatures }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Determine the dashboard route based on the user's role
+  let dashboardRoute = '/signup'; // Default to signup if role is null
+  if (role === 'Mentor') {
+    dashboardRoute = `/mentorDashboard/${userId}`;
+  } else if (role === 'Mentee') {
+    dashboardRoute = `/menteeDashboard/${userId}`;
+  }
 
   return (
     <nav className="bg-background shadow-md">
@@ -16,9 +24,16 @@ export default function Navbar() {
           </div>
           {/* Centered Links Section */}
           <div className="hidden md:flex flex-grow justify-center space-x-4">
-            <Link href="/dashboard" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">Dashboard</Link>
+            <Link href={dashboardRoute} className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">
+              Dashboard
+            </Link>
             <Link href="/about" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">About</Link>
-            <Link href="/features" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium">Features</Link>
+            <button 
+              onClick={onScrollToFeatures} 
+              className="text-foreground hover:text-primary px-3 py-2 rounded-md text-md font-medium"
+            >
+              Features
+            </button>
           </div>
 
           {/* Right Side: Login and Sign Up */}
@@ -59,9 +74,16 @@ export default function Navbar() {
       </div>
       <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden`}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link href="/dashboard" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Dashboard</Link>
+          <Link href={dashboardRoute} className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">
+            Dashboard
+          </Link>
           <Link href="/about" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">About</Link>
-          <Link href="/features" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Features</Link>
+          <button 
+            onClick={onScrollToFeatures} 
+            className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
+          >
+            Features
+          </button>
           <Link href="/signin" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Login</Link>
           <Link href="/signup" className="bg-foreground text-white hover:bg-opacity-90 block px-3 py-2 rounded-md text-base font-medium">Sign Up</Link>
         </div>

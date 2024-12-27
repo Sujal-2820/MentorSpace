@@ -2,30 +2,93 @@
 
 import Navbar from './components/home/Navbar';
 import Footer from './components/home/Footer';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation';
+import { supabase } from '../lib/supabase-client';
 
 export default function Home() {
+  const [user, setUser] = useState(null); 
+  const [role, setRole] = useState(null); 
+  const [userId, setUserId] = useState(null); 
+  const router = useRouter(); 
+
+  const featuresRef = useRef(null);  // Create a ref for the Features section
+
+  const handleScrollToFeatures = () => {
+    if (featuresRef.current) {
+      featuresRef.current.scrollIntoView({ behavior: 'smooth' }); // Scroll smoothly to the Features section
+    }
+  };
+
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (session?.user) {
+          setUser(session.user); // Set the user object
+          setUserId(session.user.id); // Set the userId
+
+          // Fetch the user role from Supabase
+          const { data } = await supabase
+            .from('users') // Replace 'users' with your actual table name
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+
+          setRole(data?.role || null); // Safely set role to null if not found
+        }
+      } catch (error) {
+        console.error('Error fetching user role:', error.message);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // Determine the dashboard route based on the user's role
+  let dashboardRoute = '/signup'; // Default to signup if role is null
+  if (role === 'Mentor') {
+    dashboardRoute = `/mentorDashboard/${userId}`;
+  } else if (role === 'Mentee') {
+    dashboardRoute = `/menteeDashboard/${userId}`;
+  }
+
+  console.log("user role: ", role);
+
+  const handleGetStartedClick = () => {
+    router.push(dashboardRoute); // Redirect user based on their role
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar role={role} userId={userId} onScrollToFeatures={handleScrollToFeatures} />
       <main className="flex-grow">
-        <Header />
-        <Features />
+        <Header handleGetStartedClick={handleGetStartedClick} />
+        <div ref={featuresRef}>
+          <Features />
+        </div>
         <Testimonials />
         <FAQ />
-        <CallToAction />
+        <CallToAction handleGetStartedClick={handleGetStartedClick} />
       </main>
       <Footer />
     </div>
   );
 }
 
-function Header() {
+function Header({ handleGetStartedClick }) {
   return (
-    <header className="bg-background">
+    <motion.header
+      className="bg-background"
+      initial={{ opacity: 0, y: 50 }} // Starts off-screen and invisible
+      animate={{ opacity: 1, y: 0 }} // Ends in its original position
+      transition={{ duration: 1 }} // Transition time
+    >
       <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
         <div className="lg:flex lg:items-center lg:justify-between">
           <div className="lg:w-1/2">
@@ -36,33 +99,36 @@ function Header() {
               Connect with experienced mentors or passionate mentees in your field. Grow together, learn from each other, and achieve your goals.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4">
-              <a href="#" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition duration-150 ease-in-out">
+              <button
+                onClick={handleGetStartedClick}
+                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition duration-150 ease-in-out"
+              >
                 Get Started
-              </a>
+              </button>
               <a href="#" className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 transition duration-150 ease-in-out">
                 Learn More
               </a>
             </div>
           </div>
           <div className="mt-10 lg:mt-0 lg:w-1/2">
-          <Image
-                src="https://media.istockphoto.com/id/2077560078/photo/closeup-lawyer-or-insurance-agent-pointing-at-contract-showing-male-client-where-to-signature.jpg?s=612x612&w=0&k=20&c=lU8Dlal-bE054A4CzqcWsH9_sWymfv-LUHqbGqODbiw="
-                alt="Mentorship illustration"
-                width={600}
-                height={400}
-                className="rounded-lg shadow-xl"
-                style={{
-                  clipPath: 'url(#blob)',
-                  width: '100%',
-                  height: 'auto',
-                  maxWidth: '600px',
-                  margin: '0 auto'
-                }}
-              />
+            <Image
+              src="https://media.istockphoto.com/id/2077560078/photo/closeup-lawyer-or-insurance-agent-pointing-at-contract-showing-male-client-where-to-signature.jpg?s=612x612&w=0&k=20&c=lU8Dlal-bE054A4CzqcWsH9_sWymfv-LUHqbGqODbiw="
+              alt="Mentorship illustration"
+              width={600}
+              height={400}
+              className="rounded-lg shadow-xl"
+              style={{
+                clipPath: 'url(#blob)',
+                width: '100%',
+                height: 'auto',
+                maxWidth: '600px',
+                margin: '0 auto'
+              }}
+            />
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }
 
@@ -256,7 +322,7 @@ function FAQItem({ question, answer }) {
   );
 }
 
-function CallToAction() {
+function CallToAction({handleGetStartedClick}) {
   return (
     <section className="bg-blue-600 py-16">
       <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
@@ -267,12 +333,12 @@ function CallToAction() {
         <p className="mt-4 text-lg leading-6 text-blue-100">
           Whether you're looking to find a mentor or become one, MentorMatch is the perfect platform to connect, learn, and grow.
         </p>
-        <a
-          href="#"
+        <button
+          onClick={handleGetStartedClick}
           className="mt-8 inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50 transition duration-150 ease-in-out"
         >
           Get Started Now
-        </a>
+        </button>
       </div>
     </section>
   );
