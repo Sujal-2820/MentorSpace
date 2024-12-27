@@ -146,7 +146,7 @@ function Features() {
     },
     {
       title: 'Progress Tracking',
-      description: 'Set goals, track progress, and celebrate milestones together on your mentorship journey.',
+      description: 'Set goals, track progress, and celebrate milestones together on your mentorship journey. You have got this',
       image: 'https://media.istockphoto.com/id/953153186/vector/target-guideline.jpg?s=612x612&w=0&k=20&c=lqZrNI91wXJqIiLA-4cIZ9roU1iTm_5ncnjWC2SUooY=',
     },
     {
