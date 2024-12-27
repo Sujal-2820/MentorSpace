@@ -1,5 +1,3 @@
-//src\app\menteeDashboard\[userId]\screens\Explore\page.js
-
 'use client';
 
 import { useState, useEffect } from "react";
@@ -12,19 +10,31 @@ const Explore = () => {
   const { user, menteeDetails } = useMenteeDashboard();
   const [mentors, setMentors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterExpertise, setFilterExpertise] = useState("");
+  const [filterExpertise, setFilterExpertise] = useState(""); // Added for expertise filter
   const [filterAvailability, setFilterAvailability] = useState("");
   const [sortBy, setSortBy] = useState("rating");
   const [loadingMentors, setLoadingMentors] = useState({}); // Tracks loading state for each mentor
 
   const router = useRouter();
 
-  console.log("menteeDetails in explore page: ", menteeDetails);
-
   // Fetch mentor data from Supabase and filter out already requested mentors
   useEffect(() => {
     const fetchMentors = async () => {
       try {
+        // Fetch mentee fields_of_interest from the mentees table
+        const { data: menteeData, error: menteeError } = await supabase
+          .from('mentees')
+          .select('fields_of_interest')
+          .eq('id', menteeDetails.id)
+          .single();
+
+        if (menteeError) {
+          console.error('Error fetching mentee fields of interest:', menteeError);
+          return;
+        }
+
+        const menteeFieldsOfInterest = menteeData?.fields_of_interest || [];
+
         // Fetch all mentors
         const { data: mentorsData, error: mentorsError } = await supabase
           .from('mentors') // Replace with your actual table name
@@ -50,7 +60,14 @@ const Explore = () => {
         const requestedMentorIds = connectionRequests.map(request => request.mentor_id);
 
         // Filter out mentors that are already requested
-        const availableMentors = mentorsData.filter(mentor => !requestedMentorIds.includes(mentor.id));
+        let availableMentors = mentorsData.filter(mentor => !requestedMentorIds.includes(mentor.id));
+
+        // Filter mentors by matching areas_of_expertise with mentee's fields_of_interest
+        availableMentors = availableMentors.filter(mentor =>
+          mentor.areas_of_expertise.some(expertise =>
+            menteeFieldsOfInterest.includes(expertise)
+          )
+        );
 
         setMentors(availableMentors);
       } catch (error) {
@@ -83,9 +100,11 @@ const Explore = () => {
     try {
       const { data, error } = await supabase
         .from('connection_requests')
-        .insert([
-          { mentor_id: mentorId, mentee_id: menteeId, status: 'Pending' }
-        ]);
+        .insert([{
+          mentor_id: mentorId,
+          mentee_id: menteeId,
+          status: 'Pending'
+        }]);
 
       if (error) {
         console.error('Error sending mentorship request:', error);
@@ -132,6 +151,7 @@ const Explore = () => {
     <div className="lg:pl-64 md:pl-64 sm:pl-64 pl-16 py-6">
       <div className="container mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-primary">Explore Mentors</h1>
+        <h4 className="mb-4 text-primary">Found the best mentors that match you fields of interest.</h4>
 
         <div className="mb-4 flex flex-col sm:flex-row gap-4">
           <input
@@ -148,6 +168,12 @@ const Explore = () => {
             onChange={(e) => setFilterExpertise(e.target.value)}
           >
             <option value="">Filter by Expertise</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Software Development">Software Development</option>
+            <option value="Entrepreneurship">Entrepreneurship</option>
+            <option value="Finance">Finance</option>
+            <option value="Human Resources">Human Resources</option>
           </select>
 
           <select
@@ -236,4 +262,3 @@ const Explore = () => {
 };
 
 export default Explore;
-

@@ -5,14 +5,26 @@ import { FiBell } from 'react-icons/fi';
 import { HiOutlineLogout } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { supabase } from '../../../../lib/supabase-client'; // Import Supabase client
+
 
 const Navbar = () => {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const router = useRouter();
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const handleLogout = () => {
-    console.log('User logged out');
+  const handleLogout = async () => {
+    try {
+      // Log out the user using Supabase
+      await supabase.auth.signOut();
+
+      // Redirect to the home page after logout
+      router.push('/');
+    } catch (error) {
+      console.error('Error logging out:', error.message);
+    }
+
+    // Close the logout dialog
     setShowLogoutDialog(false);
   };
 
@@ -52,7 +64,7 @@ const Navbar = () => {
 
         {/* Logout */}
         <button
-          onClick={() => setShowLogoutDialog(true)}
+          onClick={() => setShowLogoutDialog(true)} // Trigger logout dialog
           className="text-gray-600 hover:text-red-500"
         >
           <HiOutlineLogout size={20} />
