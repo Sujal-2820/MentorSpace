@@ -1,8 +1,9 @@
 # Personalized Learning Platform
 
-![Project Banner](img/readme/banner.png)
+![Project Banner](images/logo.png)
 
-A personalized learning platform that tailors courses to users based on their skillset preferences and onboarding responses. The application dynamically adjusts module difficulty based on user performance, ensuring a structured and effective learning experience.
+"MentorSpace" is a mentorship matching platform where users can create an account, set up a profile as a mentor or mentee, specify their skills or areas of interest, and find matches with others for mentorship opportunities.
+
 
 ---
 
@@ -32,34 +33,28 @@ With strong communication, teamwork, and management skills, Sujal excels in coll
 ## Tech Stack
 
 - **Frontend**: [Next.js](https://nextjs.org/) - A React framework for building fast, scalable web applications.
-- **Backend & Database**: [Firebase Firestore](https://firebase.google.com/docs/firestore) - NoSQL database for real-time data storage and retrieval.
-- **Authentication**: [Firebase Authentication](https://firebase.google.com/docs/auth) - Secure Google Sign-In for user authentication.
-- **Storage**: [Google Cloud Storage](https://cloud.google.com/storage) - Handles image and file uploads for the platform.
+- **Backend & Database**: [Supabase and PostgreSQL](https://supabase.com/) - PostgreSQL database for real-time data storage and retrieval.
+- **Authentication**: [Supabase Authentication](https://supabase.com/docs/guides/auth) - Signup and Signin using supabase Authentication.
 
 ---
 
 ## Screenshots
 
-### Onboarding Flow
-<img src="img/readme/onboarding1.png" alt="Onboarding Flow1" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+### Home
+<img src="images/homePage.png" alt="Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
-<img src="img/readme/onboarding2.png" alt="Onboarding Flow2" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+
+### Onboarding
+<img src="images/mentorOnboarding.png" alt="Onboarding Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
-<img src="img/readme/onboarding3.png" alt="Onboarding Flow3" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
-<br/><br/>
 
-### Course Recommendation
-<img src="img/readme/course-recommendation.png" alt="Course Recommendation" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
-<br/><br/>
-
-### Module Progress and Feedback
-<img src="img/readme/module-list2.png" alt="Module Progress" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
-<br/><br/>
-
-### Module Images
-<img src="img/readme/module.png" alt="Module Image1" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+### Mentor Dashboard
+#### 1. Mentor Home
+<img src="images/mentorHome.png" alt="Onboarding Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
-<img src="img/readme/module2.png" alt="Module Image2" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+
+#### 2. 
+
 
 
 ---
