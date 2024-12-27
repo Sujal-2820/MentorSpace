@@ -7,6 +7,20 @@
 
 ---
 
+## Key Features
+
+- **Personalized Dashboard**: Based on profile information, mentors and mentees receive personalized dashboards..
+- **Onboarding**: Following the signup process, mentors and mentees access dedicated onboarding pages to submit their profile information and set their profile images.
+- **Showcasing potential mentors to mentees**: Mentees can view mentor profiles and *Make Connection Requests*.
+- **Filtering**: Mentees can filter mentors based on parameters such as *Expertise, Availability, Rating*.
+- **Establishing Sessions**: Mentors can schedule sessions for connected mentees on selected dates and times, providing links to meetings.
+- **Sharing Resources**: Mentees can request resources from connected mentors, who can then share the requested materials.
+- **Dynamic Updates**: All mentor and mentee activities are saved in Supabase SQL relations and storage, with updates dynamically reflected on dashboards.
+- **Feedback System**: Mentees can provide feedback to mentors after sessions or appointments, which mentors can view on the Analytics page for personal improvement.
+
+
+---
+
 ## Project Owner
    ### Sujal Soni
    ![Project Owner](https://avatars.githubusercontent.com/u/112640952?v=4)
@@ -21,20 +35,12 @@ With strong communication, teamwork, and management skills, Sujal excels in coll
 
 ---
 
-## Key Features
-
-- **Dynamic Course Recommendations**: Suggests courses based on user answers during onboarding.
-- **Adaptive Learning**: Automatically adjusts module difficulty based on user performance and feedback.
-- **Structured Learning Path**: Provides a progressive sequence of modules tailored to the user's learning level.
-- **Customizable Difficulty**: Users can influence module difficulty based on their feedback and quiz outcomes.
-
----
-
 ## Tech Stack
 
 - **Frontend**: [Next.js](https://nextjs.org/) - A React framework for building fast, scalable web applications.
 - **Backend & Database**: [Supabase and PostgreSQL](https://supabase.com/) - PostgreSQL database for real-time data storage and retrieval.
 - **Authentication**: [Supabase Authentication](https://supabase.com/docs/guides/auth) - Signup and Signin using supabase Authentication.
+- **Styling and Responsiveness**: [Tailwind CSS](https://tailwindcss.com/) - For dynamic styling and implementing responsiveness of pages across different views (Laptop, Tablet, Smartphone).
 
 ---
 
@@ -43,106 +49,133 @@ With strong communication, teamwork, and management skills, Sujal excels in coll
 ### Home
 <img src="images/homePage.png" alt="Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
+<br/>
 
 ### Onboarding
 <img src="images/mentorOnboarding.png" alt="Onboarding Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
+<br/>
 
 ### Mentor Dashboard
 #### 1. Mentor Home
-<img src="images/mentorHome.png" alt="Onboarding Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="images/mentorHome.png" alt="Mentor Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 
-#### 2. 
+#### 2. Mentor Sessions
+<img src="images/mentorSessions.png" alt="Mentor Sessions Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<br/>
 
+#### 3. Mentor Requests
+<img src="images/mentorRequests.png" alt="Mentor Requests Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<br/>
 
+#### 4. Mentor Resources
+<img src="images/mentorResources.png" alt="Mentor Resources Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<br/>
+<br/>
 
----
+### Mentee Dashboard
+#### 1. Mentee Home
+<img src="images/menteeHome.png" alt="Mentee Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<br/>
 
+#### 2. Explore Mentors
+<img src="images/exploreMentors.png" alt="Explore Mentors Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<br/>
 
-## Installation and Setup
+#### 3. Mentee Requests
+<img src="images/menteeRequests.png" alt="Mentee Requests Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<br/>
 
-### Prerequisites
+#### 4. Mentee Sessions
+<img src="images/menteeSessions.png" alt="Mentee Sessions Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<br/>
 
-1. [Node.js](https://nodejs.org/) installed.
-2. Firebase project setup with Firestore, Authentication, and Cloud Storage.
-
-### Installation Steps
-
-1. Fork this repository.
-
-2. Clone the repository:
-   ```bash
-   git clone https://github.com/SkillPath.git
-   cd your-repo-name
-   ```
-
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-4. Set up environment variables:
-   - Create a `.env.local` file in the root directory.
-   - Add Firebase configuration:
-     ```makefile
-     NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
-     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-auth-domain
-     NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-     NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-storage-bucket
-     NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
-     NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
-     ```
-
-5. Run the development server:
-     ```bash
-     npm run dev
-     ```
-
-6. Open your browser and navigate to:
-     ```bash
-     http://localhost:3000
-     ```
-
----
-
-## Deployment
-To deploy the application, follow these steps:
-
-1. Build the application:
-   ```bash
-   npm run build
-   ```
-
-2. Start the production server:
-   ```bash
-   npm run start
-   ```
-
-3. Alternatively, deploy to a cloud hosting service such as Vercel or Firebase Hosting.
-
+#### 5. Mentee Resources
+<img src="images/menteeResources.png" alt="Mentee Resources Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<br/>
+<br/>
 
 ---
 
 ## Project Structure
    ```
-   └── skillpath/
-      ├── .next/
-      ├── node_modules/
-      └── src/
-      ├── .env.local
-      ├── firebase.js
-      └── dashboard.js
-      ├── jsconfig.json
-      └── package.json
+   /src/
+      ├── app/
+      │   ├── components/
+      │   │   ├── home/
+      │   │   │   ├── Features.js
+      │   │   │   ├── Footer.js
+      │   │   │   └── Navbar.js
+      │   │   └── ThemeProvider.js
+      │   ├── globals.css
+      │   ├── layout.js
+      │   ├── menteeDashboard/
+      │   │   └── [userId]/
+      │   │       ├── components/
+      │   │       │   ├── Navbar.js
+      │   │       │   └── Sidebar.js
+      │   │       ├── layout.js
+      │   │       ├── MenteeDashboardContext.js
+      │   │       ├── page.js
+      │   │       └── screens/
+      │   │           ├── Explore/
+      │   │           │   └── page.js
+      │   │           ├── FullProfile/
+      │   │           │   └── page.js
+      │   │           ├── Goals/
+      │   │           │   └── page.js
+      │   │           ├── Profile/
+      │   │           │   └── page.js
+      │   │           ├── Requests/
+      │   │           │   └── page.js
+      │   │           ├── Resources/
+      │   │           │   └── page.js
+      │   │           └── Sessions/
+      │   │               └── page.js
+      │   ├── menteeOnboarding/
+      │   │   └── page.js
+      │   ├── mentorDashboard/
+      │   │   └── [userId]/
+      │   │       ├── components/
+      │   │       │   ├── Navbar.js
+      │   │       │   └── Sidebar.js
+      │   │       ├── layout.js
+      │   │       ├── MentorDashboardContext.js
+      │   │       ├── page.js
+      │   │       └── screens/
+      │   │           ├── Analytics/
+      │   │           │   └── page.js
+      │   │           ├── FullProfile/
+      │   │           │   └── page.js
+      │   │           ├── Profile/
+      │   │           │   └── page.js
+      │   │           ├── Requests/
+      │   │           │   └── page.js
+      │   │           ├── Resources/
+      │   │           │   └── page.js
+      │   │           └── Sessions/
+      │   │               └── page.js
+      │   ├── mentorOnboarding/
+      │   │   └── page.js
+      │   ├── page.js
+      │   ├── signin/
+      │   │   └── page.js
+      │   ├── signup/
+      │   │   └── page.js
+      │   └── utils/
+      │       └── middleware.js
+      └── lib/
+          ├── supabase-client.js
+          └── utils.js
+
    ```
 
 ### Inside src folder:
    - components/: Contains reusable React components.
-   - page.js/: This project uses App Router to arrange each page code inside page.js file.
-   - public/: Static assets like images and files.
-   - styles/: CSS modules for styling.
-   - utils/: Utility functions.
+   - page.js/: This project uses App Router of Next JS to arrange each page code inside page.js file.
+   - styles/: globals.css file to define global colors and styling for the project.
+   - utils/: Utility functions such as "Supabase Connectivity".
 
 
 ---
@@ -158,33 +191,10 @@ To deploy the application, follow these steps:
 
 ---
 
-### Contributing
-Contributions are welcome! Please fork the repository and create a pull request.
-<br/>
-Check out **<code><a href="https://github.com/Sujal-2820/SkillPath/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a></code>** for a comprehensive guide on the contribution process.
-
----
-
-### NOTE
-   - Raising an "issue" first would increase the chances of your pull request being noticed.
-   - You can raise an issue to ask for .env.local file as it holds the necessary credentials for Firebase.
-   - The project requires a ```secret``` file (apart from ```.env.local```) in order to fetch the content from "Cloud Storage" of "Google Cloud Platform". This shall be provided to you if asked for the same.
-
----
-
-### Scope of Contribution
-   - This project particularly seeks improvement in the JSON content inside each file of ```courseFolder```. The JSON forms the basis of module data that is presented inside a particular course 📝.
-   - If you are someone who has got a good knowledge of Next JS, you are free to raise an issue and eventually a pull request of your solution/modifications to the code which could enhance the UI of the project 🌄
-   - Even your smallest contribution counts. You will be credited inside both the project as well as in the repository 🧑🏻‍💻.
-
-
-
----
-
 ### Contact
-For any inquiries, please reach out to:
+Reach out to the developer **Sujal Soni**
 
-Email: sujal99ds@gmail.com
+Email: sujal28ds@gmail.com
 <br/>
 GitHub: https://github.com/Sujal-2820
 <br/>
