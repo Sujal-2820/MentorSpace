@@ -1,6 +1,3 @@
-import Image from 'next/image';
-import SujalSoni from '../../app/projectImages/SujalSoni1.jpg';
-import mentorspacebanner from '../../app/projectImages/logo.png';
 import Link from 'next/link';
 
 
@@ -17,13 +14,6 @@ export default function About() {
         <p className="text-lg mb-8">
           "MentorSpace" is a mentorship matching platform where users can create an account, set up a profile as a mentor or mentee, specify their skills or areas of interest, and find matches with others for mentorship opportunities.
         </p>
-        <Image
-          src={mentorspacebanner}
-          alt="MentorSpace Banner"
-          width={400}
-          height={200}
-          className="rounded-lg shadow-lg"
-        />
       </div>
 
       <div className="mb-16">
@@ -53,16 +43,7 @@ export default function About() {
       <div className="mb-16">
         <h2 className="text-3xl font-semibold mb-8">About the Developer</h2>
         <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-          <div className="w-full md:w-1/3">
-            <Image
-              src={SujalSoni}
-              alt="Sujal Soni"
-              width={400}
-              height={400}
-              className="rounded-lg shadow-lg"
-            />
-          </div>
-          <div className="w-full md:w-2/3">
+          <div className="w-full">
             <p className="text-lg mb-4">
               Sujal Soni is a highly motivated and skilled final-year CSE student with a strong passion for full-stack web development. He possesses a comprehensive skillset, including expertise in JavaScript, React.js, Node.js, MongoDB, Next.js, and Firebase. His practical experience has been honed through internships at Indo-Tech and NotesEra, where he developed and deployed web applications using the MERN stack.
             </p>
