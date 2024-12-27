@@ -1,6 +1,6 @@
 # Personalized Learning Platform
 
-![Project Banner](images/logo.png)
+![Project Banner](Screenshots/logo.png)
 
 "MentorSpace" is a mentorship matching platform where users can create an account, set up a profile as a mentor or mentee, specify their skills or areas of interest, and find matches with others for mentorship opportunities.
 
@@ -47,52 +47,52 @@ With strong communication, teamwork, and management skills, Sujal excels in coll
 ## Screenshots
 
 ### Home
-<img src="images/homePage.png" alt="Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/homePage.png" alt="Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 <br/>
 
 ### Onboarding
-<img src="images/mentorOnboarding.png" alt="Onboarding Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/mentorOnboarding.png" alt="Onboarding Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 <br/>
 
 ### Mentor Dashboard
 #### 1. Mentor Home
-<img src="images/mentorHome.png" alt="Mentor Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/mentorHome.png" alt="Mentor Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 
 #### 2. Mentor Sessions
-<img src="images/mentorSessions.png" alt="Mentor Sessions Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/mentorSessions.png" alt="Mentor Sessions Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 
 #### 3. Mentor Requests
-<img src="images/mentorRequests.png" alt="Mentor Requests Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/mentorRequests.png" alt="Mentor Requests Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 
 #### 4. Mentor Resources
-<img src="images/mentorResources.png" alt="Mentor Resources Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/mentorResources.png" alt="Mentor Resources Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 <br/>
 
 ### Mentee Dashboard
 #### 1. Mentee Home
-<img src="images/menteeHome.png" alt="Mentee Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/menteeHome.png" alt="Mentee Home Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 
 #### 2. Explore Mentors
-<img src="images/exploreMentors.png" alt="Explore Mentors Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/exploreMentors.png" alt="Explore Mentors Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 
 #### 3. Mentee Requests
-<img src="images/menteeRequests.png" alt="Mentee Requests Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/menteeRequests.png" alt="Mentee Requests Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 
 #### 4. Mentee Sessions
-<img src="images/menteeSessions.png" alt="Mentee Sessions Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/menteeSessions.png" alt="Mentee Sessions Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 
 #### 5. Mentee Resources
-<img src="images/menteeResources.png" alt="Mentee Resources Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
+<img src="Screenshots/menteeResources.png" alt="Mentee Resources Page" style="border: 3px solid #000; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);"/>
 <br/>
 <br/>
 
