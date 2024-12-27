@@ -2,7 +2,7 @@ import './globals.css'
 import { ThemeProvider } from './components/ThemeProvider'
 
 export const metadata = {
-  title: 'MentorMatch',
+  title: 'MentorSpace',
   description: 'Find Your Perfect Mentor Match',
 }
 
