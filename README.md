@@ -177,24 +177,12 @@ With strong communication, teamwork, and management skills, Sujal excels in coll
    - styles/: globals.css file to define global colors and styling for the project.
    - utils/: Utility functions such as "Supabase Connectivity".
 
-
----
-
-### Commands
-
-| **Command**   | **Description**                          |
-|---------------|------------------------------------------|
-| npm run dev   | Starts the development server.           |
-| npm run build | Builds the application for production.   |
-| npm run start | Runs the application in production mode. |
-
-
 ---
 
 ### Contact
-Reach out to the developer **Sujal Soni**
+Reach out to the developer **Sujal Soni** 🧑🏻‍💻
 
-Email: sujal28ds@gmail.com
+Email: sujal28soni@gmail.com
 <br/>
 GitHub: https://github.com/Sujal-2820
 <br/>
