@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import SujalSoni from '../../../images/Sujal-Soni1.jpg';
-import mentorspacebanner from '../../../images/logo.png';
+import SujalSoni from '../../../public/projectImages/Sujal-Soni1.jpg';
+import mentorspacebanner from '../../../public/projectImages/logo.png';
 import Link from 'next/link';
 
 
