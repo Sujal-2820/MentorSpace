@@ -182,7 +182,7 @@ With strong communication, teamwork, and management skills, Sujal excels in coll
 ### Contact
 Reach out to the developer **Sujal Soni** 🧑🏻‍💻
 
-Email: sujal28soni@gmail.com
+Email: sujalsoni.gdsc@gmail.com
 <br/>
 GitHub: https://github.com/Sujal-2820
 <br/>
