@@ -62,6 +62,7 @@ export default function About() {
         </div>
       </div>
 
+      <br/>
       <div>
         <h2 className="text-3xl font-semibold mb-4">Contact</h2>
         <p className="text-lg mb-2">Reach out to the developer Sujal Soni:</p>
