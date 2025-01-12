@@ -65,7 +65,7 @@ export default function About() {
       <br/>
       <div>
         <h2 className="text-3xl font-semibold mb-4">Contact</h2>
-        <p className="text-lg mb-2">Reach out to the developer Sujal Soni:</p>
+        <p className="text-lg mb-2">Reach out to the developer Sujal Soni 🧑🏻‍💻</p>
         <ul className="list-disc list-inside text-lg space-y-2">
           <li>Email: <a href="mailto:sujal28soni@gmail.com" className="text-blue-400 hover:underline">sujal28soni@gmail.com</a></li>
           <li>GitHub: <Link href="https://github.com/Sujal-2820" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">https://github.com/Sujal-2820</Link></li>
