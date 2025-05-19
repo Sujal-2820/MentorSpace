@@ -13,3 +13,10 @@ body {
   color: var(--foreground);
   background: var(--background);
 }
+
+/* Apply strict background to all common form elements */
+input,
+select,
+textarea {
+  background-color: var(--background) !important;
+}
