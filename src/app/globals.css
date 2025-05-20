@@ -19,4 +19,11 @@ input,
 select,
 textarea {
   background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--foreground) !important;
+  opacity: 0.6 !important;
 }
