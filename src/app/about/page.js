@@ -47,7 +47,7 @@ export default function About() {
               
           <div className="w-full">
             <p className="text-lg mb-4">
-              Sujal Soni is a highly motivated and skilled final-year CSE student with a strong passion for full-stack web development. He possesses a comprehensive skillset, including expertise in JavaScript, React.js, Node.js, MongoDB, Next.js, and Firebase. His practical experience has been honed through internships at Indo-Tech and NotesEra, where he developed and deployed web applications using the MERN stack.
+              Sujal Soni is a highly motivated and skilled CSE Graduate with a strong passion for full-stack web development. He possesses a comprehensive skillset, including expertise in JavaScript, React.js, Node.js, MongoDB, Next.js, and Firebase. His practical experience has been honed through internships at Indo-Tech and NotesEra, where he developed and deployed web applications using the MERN stack.
             </p>
             <p className="text-lg mb-4">
               Sujal's projects demonstrate his ability to create innovative and impactful solutions. His Skill Path platform provides personalized learning experiences, while Event Sphere revolutionizes event registration and management. Help Geared, a centralized platform for discovering and donating to NGOs, showcases his commitment to using technology for social good.
